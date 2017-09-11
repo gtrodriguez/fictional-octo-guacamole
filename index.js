@@ -11,7 +11,7 @@ app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/example.html'));
 });
 
-var server = app.listen(3000);
+var server = app.listen(443);
 var io = socket(server);
 
 io.on('connection', function(socket){
