@@ -1,0 +1,39 @@
+.interactive-tile,
+.game-board-tile {
+  height: 20px;
+  width: 20px;
+  padding: 3px;
+}
+.game-board-tile {
+  border: 1px solid grey;
+  font-weight: bold;
+  text-align: center;
+  line-height: 20px;
+}
+.interactive-tile {
+  border: 1px solid blue;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+.interactive-tile:hover {
+  border-color: magenta;
+}
+.interactive-tile .disabled {
+  border: 1px solid white;
+}
+#game-board {
+  border: 1px solid black;
+  display: flex;
+  flex-direction: column-reverse;
+}
+.game-row,
+#interactive-row {
+  display: flex;
+}
+#interactive-row {
+  flex-direction: row;
+}
+.game-row {
+  display: flex;
+  flex-direction: row;
+}

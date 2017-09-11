@@ -1,0 +1,41 @@
+{
+  "name": "connectx",
+  "version": "0.0.1",
+  "description": "a game for fun and leisure",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "webpack --watch --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gtrodriguez/fictional-octo-guacamole.git"
+  },
+  "keywords": [
+    "game"
+  ],
+  "author": "Gabriel Torres Rodriguez",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gtrodriguez/fictional-octo-guacamole/issues"
+  },
+  "homepage": "https://github.com/gtrodriguez/fictional-octo-guacamole#readme",
+  "devDependencies": {
+    "babel": "^6.23.0",
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-react": "^6.24.1",
+    "eslint-loader": "^1.9.0",
+    "less": "^2.7.2",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "webpack": "^3.5.6"
+  },
+  "dependencies": {
+    "express": "^4.15.4",
+    "socket.io": "^2.0.3"
+  }
+}
