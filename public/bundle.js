@@ -22496,22 +22496,26 @@ var GameBoard = function (_React$Component) {
 		_this.maxY = 8;
 		_this.targetLength = 4;
 
-		var gameMatrix = new Array(8);
-		for (var i = 0; i < 8; i++) {
-			gameMatrix[i] = new Array(8);
-			gameMatrix[i].fill(0);
-		}
-
-		_this.state = { gameInstance: gameMatrix, currentPlayer: 1 };
+		_this.state = { gameInstance: null, currentPlayer: 1 };
 		_this.updateScore = _this.updateScore.bind(_this);
 		_this.handleClick = _this.handleClick.bind(_this);
 		_this.checkGameBoard = _this.checkGameBoard.bind(_this);
 		_this.checkColumnFull = _this.checkColumnFull.bind(_this);
 		_this.currentPlayerSymbol = _this.currentPlayerSymbol.bind(_this);
+		_this.resetGame = _this.resetGame.bind(_this);
+		_this.handleResetClick = _this.handleResetClick.bind(_this);
 		return _this;
 	}
 
 	_createClass(GameBoard, [{
+		key: 'componentWillMount',
+		value: function componentWillMount() {
+			this.resetGame();
+		}
+	}, {
+		key: 'componentWillUnmount',
+		value: function componentWillUnmount() {}
+	}, {
 		key: 'currentPlayerSymbol',
 		value: function currentPlayerSymbol(reverse) {
 			return reverse ? this.state.currentPlayer === 1 ? "O" : "X" : this.state.currentPlayer === 1 ? "X" : "O";
@@ -22616,6 +22620,26 @@ var GameBoard = function (_React$Component) {
 			this.checkGameBoard();
 		}
 	}, {
+		key: 'handleResetClick',
+		value: function handleResetClick() {
+			if (window.confirm("you sure?")) {
+				this.resetGame();
+			}
+		}
+	}, {
+		key: 'resetGame',
+		value: function resetGame() {
+			var gameMatrix = new Array(8);
+			for (var i = 0; i < 8; i++) {
+				gameMatrix[i] = new Array(8);
+				gameMatrix[i].fill(0);
+			}
+
+			this.setState({
+				gameInstance: gameMatrix
+			});
+		}
+	}, {
 		key: 'render',
 		value: function render() {
 			var _this2 = this;
@@ -22642,7 +22666,7 @@ var GameBoard = function (_React$Component) {
 					),
 					_react2.default.createElement(
 						'button',
-						{ type: 'button' },
+						{ type: 'button', onClick: this.handleResetClick },
 						'Reset'
 					)
 				),

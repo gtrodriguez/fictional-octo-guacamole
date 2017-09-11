@@ -10,19 +10,22 @@ class GameBoard extends React.Component{
     	this.maxY = 8;
     	this.targetLength = 4;
 
-    	var gameMatrix = new Array(8);
-    	for(var i = 0; i < 8; i++){
-    		gameMatrix[i] = new Array(8); 
-    		gameMatrix[i].fill(0);
-    	}
-
-
-    	this.state = {gameInstance: gameMatrix, currentPlayer: 1};
+    	this.state = {gameInstance: null, currentPlayer: 1};
     	this.updateScore = this.updateScore.bind(this);
     	this.handleClick = this.handleClick.bind(this);
     	this.checkGameBoard = this.checkGameBoard.bind(this);
     	this.checkColumnFull = this.checkColumnFull.bind(this);
     	this.currentPlayerSymbol = this.currentPlayerSymbol.bind(this);
+    	this.resetGame = this.resetGame.bind(this);
+    	this.handleResetClick = this.handleResetClick.bind(this);
+	}
+
+	componentWillMount(){
+		this.resetGame();
+	}
+
+	componentWillUnmount(){
+
 	}
 
 	currentPlayerSymbol(reverse){
@@ -123,6 +126,24 @@ class GameBoard extends React.Component{
 		this.checkGameBoard();
 	}
 
+	handleResetClick(){
+		if(window.confirm("you sure?")){
+			this.resetGame();
+		}
+	}
+
+	resetGame (){
+    	var gameMatrix = new Array(8);
+    	for(var i = 0; i < 8; i++){
+    		gameMatrix[i] = new Array(8); 
+    		gameMatrix[i].fill(0);
+    	}
+
+    	this.setState({
+    		gameInstance: gameMatrix
+    	});
+	}
+
 	render () {
 		return <div id="game-board-container">
 			<div id="control-panel">
@@ -130,7 +151,7 @@ class GameBoard extends React.Component{
 					<span>Current Player:</span>
 					<span>{this.currentPlayerSymbol()}</span>
 				</div>
-				<button type="button">Reset</button>
+				<button type="button" onClick={this.handleResetClick}>Reset</button>
 			</div>
 			<div id="interactive-row">
 			{
