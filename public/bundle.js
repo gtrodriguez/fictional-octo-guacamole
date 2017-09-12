@@ -13043,10 +13043,6 @@ var _gameboard = __webpack_require__(205);
 
 var _gameboard2 = _interopRequireDefault(_gameboard);
 
-var _socket = __webpack_require__(208);
-
-var _socket2 = _interopRequireDefault(_socket);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -13074,17 +13070,7 @@ var App = function (_React$Component) {
 
 	_createClass(App, [{
 		key: 'componentDidMount',
-		value: function componentDidMount() {
-			var socket = io("http://localhost:3000");
-
-			socket.on('connect', function () {
-				console.log('connect');
-			});
-			socket.on('event', function (data) {
-				console.log("data", data);
-			});
-			socket.on('disconnect', function () {});
-		}
+		value: function componentDidMount() {}
 	}, {
 		key: 'componentWillUnmount',
 		value: function componentWillUnmount() {}
@@ -25767,6 +25753,10 @@ var _gameboardtile = __webpack_require__(207);
 
 var _gameboardtile2 = _interopRequireDefault(_gameboardtile);
 
+var _socket = __webpack_require__(208);
+
+var _socket2 = _interopRequireDefault(_socket);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -25787,7 +25777,7 @@ var GameBoard = function (_React$Component) {
 		_this.maxY = 8;
 		_this.targetLength = 4;
 
-		_this.state = { gameInstance: null, currentPlayer: 1 };
+		_this.state = { gameInstance: null, currentPlayer: 1, timeStamp: null };
 		_this.updateScore = _this.updateScore.bind(_this);
 		_this.handleClick = _this.handleClick.bind(_this);
 		_this.checkGameBoard = _this.checkGameBoard.bind(_this);
@@ -25803,6 +25793,49 @@ var GameBoard = function (_React$Component) {
 		key: 'componentWillMount',
 		value: function componentWillMount() {
 			this.resetGame();
+		}
+	}, {
+		key: 'componentDidMount',
+		value: function componentDidMount() {
+			var that = this;
+			var socket = io("http://localhost:3000");
+
+			socket.on('connect', function () {
+				console.log('connect');
+				socket.emit('initial', { for: 'everyone',
+					gameInstance: that.state.gameInstance,
+					currentPlayer: that.state.currentPlayer,
+					timeStamp: that.state.timeStamp
+				});
+			});
+
+			socket.on('event', function (data) {
+				console.log("data", data);
+			});
+			socket.on('disconnect', function () {});
+
+			socket.on('initial-sync', function (msg) {
+				//if there's a newer version of this game going, use that state.
+				if (stateSyncObj.timeStamp > that.state.timeStamp) {
+					that.setState({
+						gameInstance: tateSyncObj.gameInstance,
+						currentPlayer: tateSyncObj.currentPlayer,
+						timeStamp: stateSyncObj.timeStamp,
+						yourPlayer: stateSyncObj.yourPlayer
+					});
+				}
+			});
+
+			socket.on('sync', function (msg) {
+				//if there's a newer version of this game going, use that state.
+				if (stateSyncObj.timeStamp > that.state.timeStamp) {
+					that.setState({
+						gameInstance: stateSyncObj.gameInstance,
+						currentPlayer: stateSyncObj.currentPlayer,
+						timeStamp: stateSyncObj.timeStamp
+					});
+				}
+			});
 		}
 	}, {
 		key: 'componentWillUnmount',
@@ -25974,8 +26007,6 @@ var GameBoard = function (_React$Component) {
 	}, {
 		key: 'handleClick',
 		value: function handleClick(enabled, index) {
-			console.log(index, this.props);
-
 			if (this.state.gameOver) {
 				return;
 			}

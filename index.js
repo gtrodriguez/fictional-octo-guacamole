@@ -1,8 +1,8 @@
 const express = require('express');
 const app = express();
-var http = require('http').Server(app);
+const http = require('http').Server(app);
 const path = require('path');
-const socket = require('socket.io')(http);
+const io = require('socket.io')(http);
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
@@ -12,13 +12,59 @@ app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname + '/example.html'));
 });
 
-var server = app.listen(process.env.PORT || 3000, function () {
+/*var server = app.listen(process.env.PORT || 3000, function () {
   var port = server.address().port;
   console.log("Express is working on port " + port);
-});
+});*/
 
-var io = socket(server);
+http.listen(process.env.PORT || 3000);
+
+var gameInstance = null;
+var timeStamp = null;
+var currentPlayer = null;
 
 io.on('connection', function(socket){
 	console.log('made socket connection');
+
+	socket.on('initial', function(msg){
+    	console.log('message: ' + JSON.stringify(msg));
+
+    	var syncResponse = {};
+
+
+    	if(timeStamp === null){
+    		syncResponse =  {
+    			gameInstance: msg.gameInstance,
+    			currentPlayer:  msg.currentPlayer,
+    			timeStamp: new Date(),
+    			yourPlayer: 1
+    		};
+    	}else if(msg.timeStamp === null){
+    		syncResponse =  {
+    			gameInstance: gameInstance,
+    			timeStamp: timeStamp,
+    			currentPlayer: currentPlayer,
+    			yourPlayer: 1
+    		};
+    	}else if(msg.timeStamp > timeStamp){
+    		gameInstance = msg.gameInstance;
+    		currentPlayer = msg.currentPlayer;
+    		syncResponse = {
+    			gameInstance: gameInstance,
+    			timeStamp: timeStamp,
+    			currentPlayer: currentPlayer,
+    			yourPlayer: 1
+    		};
+    	}else{
+    		syncResponse = {
+    			gameInstance: gameInstance,
+    			timeStamp: timeStamp,
+    			currentPlayer: currentPlayer,
+	   			yourPlayer: 1
+    		};
+    	}
+
+		socket.emit('initial-sync', syncResponse);
+  	});
 })
+

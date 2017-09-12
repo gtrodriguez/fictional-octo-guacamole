@@ -1,7 +1,6 @@
 import React from 'react';
 import {render} from 'react-dom';
 import GameBoard from './gameboard.jsx';
-import IO from 'socket.io-client';
 
 class App extends React.Component{
 	constructor(props) {
@@ -16,13 +15,7 @@ class App extends React.Component{
 	}
 
 	componentDidMount(){
-		var socket = io("http://localhost:3000");
 
-		socket.on('connect', function(){
-  			console.log('connect')
-		});
-		socket.on('event', function(data){console.log("data",data);});
-		socket.on('disconnect', function(){});
 	}
 
 	componentWillUnmount(){

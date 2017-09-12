@@ -1,6 +1,7 @@
 import React from 'react';
 import InteractiveTile from './interactivetile.jsx';
 import GameBoardTile from './gameboardtile.jsx';
+import IO from 'socket.io-client';
 
 class GameBoard extends React.Component{
 	constructor(props) {
@@ -10,7 +11,7 @@ class GameBoard extends React.Component{
     	this.maxY = 8;
     	this.targetLength = 4;
 
-    	this.state = {gameInstance: null, currentPlayer: 1};
+    	this.state = {gameInstance: null, currentPlayer: 1, timeStamp: null};
     	this.updateScore = this.updateScore.bind(this);
     	this.handleClick = this.handleClick.bind(this);
     	this.checkGameBoard = this.checkGameBoard.bind(this);
@@ -23,6 +24,46 @@ class GameBoard extends React.Component{
 
 	componentWillMount(){
 		this.resetGame();
+	}
+
+	componentDidMount(){
+		var that = this;
+		var socket = io("http://localhost:3000");
+
+		socket.on('connect', function(){
+  			console.log('connect');
+  			socket.emit('initial',{for: 'everyone', 
+  				gameInstance: that.state.gameInstance, 
+  				currentPlayer: that.state.currentPlayer,
+  				timeStamp: that.state.timeStamp
+  			});
+		});
+
+		socket.on('event', function(data){console.log("data",data);});
+		socket.on('disconnect', function(){}); 
+
+		socket.on('initial-sync', function(msg){
+			//if there's a newer version of this game going, use that state.
+			if(stateSyncObj.timeStamp > that.state.timeStamp){
+				that.setState({
+					gameInstance: tateSyncObj.gameInstance,
+					currentPlayer: tateSyncObj.currentPlayer,
+					timeStamp: stateSyncObj.timeStamp,
+					yourPlayer: stateSyncObj.yourPlayer
+				})
+			}
+		});
+
+		socket.on('sync', function(msg){
+			//if there's a newer version of this game going, use that state.
+			if(stateSyncObj.timeStamp > that.state.timeStamp){
+				that.setState({
+					gameInstance: stateSyncObj.gameInstance,
+					currentPlayer: stateSyncObj.currentPlayer,
+					timeStamp: stateSyncObj.timeStamp
+				})
+			}
+		});
 	}
 
 	componentWillUnmount(){
@@ -189,8 +230,6 @@ class GameBoard extends React.Component{
 
 	///put in the first available slot
 	handleClick(enabled, index){
-		console.log(index,this.props);
-
 		if(this.state.gameOver){
 			return;
 		}
@@ -233,7 +272,7 @@ class GameBoard extends React.Component{
 
     	this.setState({
     		gameInstance: gameMatrix,
-    		gameOver: false
+    		gameOver: false,
     	});
 	}
 
