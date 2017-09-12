@@ -1,7 +1,8 @@
 const express = require('express');
 const app = express();
+var http = require('http').Server(app);
 const path = require('path');
-const socket = require('socket.io');
+const socket = require('socket.io')(http);
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 
