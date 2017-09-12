@@ -37,3 +37,10 @@
   display: flex;
   flex-direction: row;
 }
+.game-over .interactive-tile {
+  border: 1px solid white;
+  cursor: default;
+}
+.game-over .interactive-tile:hover {
+  border: 1px solid white;
+}

@@ -18,6 +18,7 @@ class GameBoard extends React.Component{
     	this.currentPlayerSymbol = this.currentPlayerSymbol.bind(this);
     	this.resetGame = this.resetGame.bind(this);
     	this.handleResetClick = this.handleResetClick.bind(this);
+    	this.gameStateClass = this.gameStateClass.bind(this);
 	}
 
 	componentWillMount(){
@@ -72,7 +73,8 @@ class GameBoard extends React.Component{
 				gameWon = this.updateScore(cellVal,runningScore);
 
 				if(gameWon){
-					return window.alert("Player " + this.currentPlayerSymbol() + " won horizontally!");
+					console.log("Player " + this.currentPlayerSymbol() + " won horizontally!");
+					return true;
 				}
 			}
 		}
@@ -85,15 +87,98 @@ class GameBoard extends React.Component{
 				gameWon = this.updateScore(cellVal,runningScore);
 
 				if(gameWon){
-					return window.alert("Player " + this.currentPlayerSymbol() + " won vertically!");
+					console.log("Player " + this.currentPlayerSymbol() + " won vertically!");
+					return true;
 				}
 			}
 		}
 
 		//diagonal down
+		var x = 0;
+		var x = 0;
+		var tempX = 0;
+		var tempY = 0;
+
+		for(y = 3; y < 8; y++){
+			x = 0;
+			tempX = x;
+			tempY = y;
+			while(tempX < 8 && tempY >= 0){
+				var cellVal = this.state.gameInstance[tempX][tempY];
+				gameWon = this.updateScore(cellVal,runningScore);
+
+				if(gameWon){
+					console.log("Player " + this.currentPlayerSymbol() + " won diagonal down!");
+					return true;
+				}
+
+				tempY--;
+				tempX++;
+			}
+
+			y++;
+		}
+
+		for(x = 1; x <= 4; x++){
+			y = 7;
+			tempX = x;
+			tempY = y;
+			while(tempX < 8 && tempY >= 0){
+				var cellVal = this.state.gameInstance[tempX][tempY];
+				gameWon = this.updateScore(cellVal,runningScore);
+
+				if(gameWon){
+					console.log("Player " + this.currentPlayerSymbol() + " won diagonal down!!");
+					return true;
+				}
+
+				tempY--
+				tempX++;
+			}
+
+			x++;
+		}
 
 		//diagonal up
+		for(y = 0; y <= 4; y++){
+			x = 0;
+			tempX = x;
+			tempY = y;
+			while(tempX < 8 && tempY < 8){
+				var cellVal = this.state.gameInstance[tempX][tempY];
+				gameWon = this.updateScore(cellVal,runningScore);
 
+				if(gameWon){
+					console.log("Player " + this.currentPlayerSymbol() + " won diagonal up!");
+					return true;
+				}
+
+				tempY++;
+				tempX++;
+			}
+
+			y++;
+		}
+
+		for(x = 1; x <= 4; x++){
+			y = 0;
+			tempX = x;
+			tempY = y;
+			while(tempX < 8 && tempY < 8){
+				var cellVal = this.state.gameInstance[tempX][tempY];
+				gameWon = this.updateScore(cellVal,runningScore);
+
+				if(gameWon){
+					console.log("Player " + this.currentPlayerSymbol() + " won diagonal up!!");
+					return true;
+				}
+
+				tempY++;
+				tempX++;
+			}
+
+			x++;
+		}		
 
 		return false;
 	}
@@ -106,6 +191,10 @@ class GameBoard extends React.Component{
 	handleClick(enabled, index){
 		console.log(index,this.props);
 
+		if(this.state.gameOver){
+			return;
+		}
+
 		for(var x = 0; x < this.maxX; x++){
 			if(this.state.gameInstance[x][index] === 0){
 				var copy = this.state.gameInstance; 
@@ -113,17 +202,20 @@ class GameBoard extends React.Component{
 
 				this.setState({gameInstance: copy});
 
-				if(this.state.currentPlayer === 1){
-					this.setState({currentPlayer : 2});
-				}else{
-					this.setState({currentPlayer : 1});
-				}	
-
 				break;
 			}
 		}
 
-		this.checkGameBoard();
+		if(this.checkGameBoard()){
+			this.setState({gameOver: true});
+			return;
+		}
+
+		if(this.state.currentPlayer === 1){
+			this.setState({currentPlayer : 2});
+		}else{
+			this.setState({currentPlayer : 1});
+		}	
 	}
 
 	handleResetClick(){
@@ -140,12 +232,23 @@ class GameBoard extends React.Component{
     	}
 
     	this.setState({
-    		gameInstance: gameMatrix
+    		gameInstance: gameMatrix,
+    		gameOver: false
     	});
 	}
 
+	gameStateClass (){
+		var className = "";
+
+	 	if(this.state.gameOver){
+	 		className += "game-over"
+	 	}
+
+	 	return className;
+	}
+
 	render () {
-		return <div id="game-board-container">
+		return <div id="game-board-container" className={this.gameStateClass()}>
 			<div id="control-panel">
 				<div id="">
 					<span>Current Player:</span>
@@ -158,7 +261,7 @@ class GameBoard extends React.Component{
 				this.state.gameInstance.map((cell,index) => {
 					return <InteractiveTile key={index} x={index} 
 					enabled={()=>{ return this.checkColumnFull(index);}} 
-					handleClick={(e) => { console.log(e); this.handleClick(this.checkColumnFull(index),index) }} />
+					handleClick={(e) => {e.preventDefault(); if(this.state.gameOver) return; this.handleClick(this.checkColumnFull(index),index) }} />
 				})
 			}
 			</div>
