@@ -1,36 +1,41 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
-class GameBoardTile extends React.Component{
-	constructor(props){
-		super(props);
-	
-		this.content = this.content.bind(this);
-		this.gameBoardTileClass = this.gameBoardTileClass.bind(this);
-	}
+class GameBoardTile extends React.Component {
+  constructor(props) {
+    super(props);
 
-	content(){
-		if(this.props.value === 0){
-			return "";
-		}else{
-			return (this.props.value === 1) ? "X" : "O";
-		}
-	}
+    this.content = this.content.bind(this);
+    this.gameBoardTileClass = this.gameBoardTileClass.bind(this);
+  }
 
-	gameBoardTileClass(){
-		var className = "game-board-tile";
+  content() {
+    if (this.props.value === 0) {
+      return '';
+    }
 
-		if(this.props.value != 0){
-			className += ((this.props.value === 1) ? " player-1" : " player-2");	
-		}
+    return (this.props.value === 1) ? 'X' : 'O';
+  }
 
-		console.log(className);
+  gameBoardTileClass() {
+    let className = 'game-board-tile';
 
-		return className;
-	}
+    if (this.props.value !== 0) {
+      className += ((this.props.value === 1) ? ' player-1' : ' player-2');
+    }
 
-	render(){
-		return <div className={this.gameBoardTileClass()} >{this.content()}</div>
-	}
+    // console.log(className);
+
+    return className;
+  }
+
+  render() {
+    return <div className={this.gameBoardTileClass()} >{this.content()}</div>;
+  }
 }
+
+GameBoardTile.propTypes = {
+  value: PropTypes.number.isRequired,
+};
 
 export default GameBoardTile;
