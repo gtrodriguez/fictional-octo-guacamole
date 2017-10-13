@@ -1,6 +1,9 @@
 import React from 'react';
 import { render } from 'react-dom';
+import io from 'socket.io-client';
 import GameBoard from './gameboard';
+import GameSelector from './gameselector';
+import UserControlPanel from './usercontrolpanel';
 
 class App extends React.Component {
   static alertWin() {
@@ -11,56 +14,43 @@ class App extends React.Component {
     super(props);
 
     this.state = {
-      username: null,
-      gameId: null, 
+      user: null,
+      gameId: null,
       gameInstance: null,
-      allGames: []
+      allGames: [],
+      connection: null
     };
-    
-    this.resetGame = this.resetGame.bind(this);
-    this.handleResetClick = this.handleResetClick.bind(this);
+
+    this.submitConnectUser = this.submitConnectUser.bind(this);
+    this.submitUserRegistration = this.submitUserRegistration.bind(this);
+    this.handleGameSelection = this.handleGameSelection.bind(this);
     this.renderGameColumn = this.renderGameColumn.bind(this);
-    this.registerUser = this.registerUser.bind(this);
-    // this.alertWin = this.alertWin.bind(this);
   }
 
   componentDidMount() {
     const that = this;
     const socket = io('http://localhost:3000');
 
-    socket.on('connect', () => {
-      // console.log('connect');
-      socket.emit('initial', {
-        for: 'everyone', 
-        gameInstance: that.state.gameInstance, 
-        currentPlayer: that.state.currentPlayer,
-        timeStamp: that.state.timeStamp,
+    socket.on('connect-success', (user) => {
+      this.setState({
+        user: user
       });
     });
 
-    socket.on('event', (data) => { /* console.log('data',data); */ });
-    socket.on('disconnect', () => { }); 
-    socket.on('initial-sync', (msg) => {
-      //if there's a newer version of this game going, use that state.
-/*      if (stateSyncObj.timeStamp > that.state.timeStamp) {
-        that.setState({
-          gameInstance: stateSyncObj.gameInstance,
-          currentPlayer: stateSyncObj.currentPlayer,
-          timeStamp: stateSyncObj.timeStamp,
-          yourPlayer: stateSyncObj.yourPlayer,
-        });
-      } */
+    socket.on('sync-game', (game) => {
+      this.setState({
+        gameInstance: game
+      });
+    })
+
+    socket.on('sync-game-list', (games) => {
+      this.setState({
+        allGames: games
+      });
     });
 
-    socket.on('sync', function(msg) {
-      //if there's a newer version of this game going, use that state.
-/*      if (stateSyncObj.timeStamp > that.state.timeStamp) {
-        that.setState({
-          gameInstance: stateSyncObj.gameInstance,
-          currentPlayer: stateSyncObj.currentPlayer,
-          timeStamp: stateSyncObj.timeStamp,
-        });
-      } */
+    this.setState({
+      connection: socket
     });
   }
 
@@ -68,23 +58,41 @@ class App extends React.Component {
 
   }
 
-  registerUser () {
-    let usernameEl = document.getElementById('username');
+  handleGameSelection(gameId) {
+    const that = this;
 
-    if (usernameEl.value) {
-      usernameEl.Va
+    if (gameId != null) {//continue a previous game
+      let gameInstance = this.allGames.find((game,index) => {
+        return game.Id === gameId;
+      });
+
+      this.state.setState({
+        gameId: gameId,
+        gameInstance: gameInstance
+      });
     } else {
-      window.alert("You must select a username!");
+      //create a new game
     }
-
   }
 
-  renderGameColumn () {
-    if (this.gameId != null){
-      return <GameBoard handleWin={this.alertWin()} />      
-    } else {
-      return <GameSelector handleSelection={this.handleGameSelection()} />
+  submitUserRegistration(user) {
+    this.state.connection.emit('register', user);
+  }
+
+  submitConnectUser(email) {
+    this.state.connection.emit('connect', email);
+  }
+
+  renderGameColumn() {
+    if (this.user == null) {
+      return <div>You must first connect to the game server.</div>;
+    } else if (this.gameId != null) {
+      return <GameBoard handleWin={this.alertWin()}
+        gameInstance={this.state.gameInstance} />;
     }
+    return (<GameSelector
+      games={this.state.allGames} 
+      handleSelection={this.handleGameSelection()} />);
   }
 
   render() {
@@ -96,16 +104,11 @@ class App extends React.Component {
           }
         </div>
         <div id="communication-column">
-          <div id="user-details">
-            <label htmlFor="username">UserName:</label>
-            <input type="text" id="username" name="username" />
-            <button type="button" onClick={(e) => { e.preventDefault(); this.registerUser(); }}>Connect</button>
-          </div>
-          <div id="game-details">
-            <div>Game Room: <span /></div>
-            <div>Player 1: <span /></div>
-            <div>Player 2: <span /></div>
-          </div>
+          <UserControlPanel
+            user={ this.state.user }
+            submitUserRegistration={ this.submitUserRegistration }
+            submitConnectUser={ this.submitConnectUser }
+          />
         </div>
       </div>
     </div>

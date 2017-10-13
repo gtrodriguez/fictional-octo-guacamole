@@ -1,5 +1,6 @@
 import React from 'react';
 import io from 'socket.io-client';
+import PropTypes from 'prop-types';
 import InteractiveTile from './interactivetile';
 import GameBoardTile from './gameboardtile';
 
@@ -27,47 +28,9 @@ class GameBoard extends React.Component {
   }
 
   componentDidMount() {
-    const that = this;
-    const socket = io('http://localhost:3000');
-
-    socket.on('connect', () => {
-      // console.log('connect');
-      socket.emit('initial', {
-        for: 'everyone', 
-        gameInstance: that.state.gameInstance, 
-        currentPlayer: that.state.currentPlayer,
-        timeStamp: that.state.timeStamp,
-      });
-    });
-
-    socket.on('event', (data) => { /* console.log('data',data); */ });
-    socket.on('disconnect', () => { }); 
-    socket.on('initial-sync', (msg) => {
-      //if there's a newer version of this game going, use that state.
-/*      if (stateSyncObj.timeStamp > that.state.timeStamp) {
-        that.setState({
-          gameInstance: stateSyncObj.gameInstance,
-          currentPlayer: stateSyncObj.currentPlayer,
-          timeStamp: stateSyncObj.timeStamp,
-          yourPlayer: stateSyncObj.yourPlayer,
-        });
-      } */
-    });
-
-    socket.on('sync', function(msg) {
-      //if there's a newer version of this game going, use that state.
-/*      if (stateSyncObj.timeStamp > that.state.timeStamp) {
-        that.setState({
-          gameInstance: stateSyncObj.gameInstance,
-          currentPlayer: stateSyncObj.currentPlayer,
-          timeStamp: stateSyncObj.timeStamp,
-        });
-      } */
-    });
   }
 
   componentWillUnmount() {
-
   }
 
   currentPlayerSymbol(reverse) {
@@ -317,20 +280,17 @@ class GameBoard extends React.Component {
           }
         </div>
       </div>
-      <div id="communication-column">
-        <div id="user-details">
-          <label htmlFor="username">UserName:</label>
-          <input type="text" id="username" name="username" />
-          <button type="button">Connect</button>
-        </div>
-        <div id="game-details">
-          <div>Game Room: <span /></div>
-          <div>Player 1: <span /></div>
-          <div>Player 2: <span /></div>
-        </div>
-      </div>
     </div> );
   }
 }
+
+GameBoard.defaultProps = {
+  gameInstance: null
+};
+
+GameBoard.PropTypes = {
+  gameInstance: PropTypes.object,
+  handleWin: PropTypes.func.isRequired
+};
 
 export default GameBoard;
