@@ -9,7 +9,7 @@ class InteractiveTile extends React.Component {
   }
 
   interactiveTitleClassName() {
-    if (this.props.enabled) {
+    if (this.props.enabled()) {
       return 'interactive-tile';
     }
 
@@ -25,7 +25,7 @@ class InteractiveTile extends React.Component {
 }
 
 InteractiveTile.propTypes = {
-  enabled: PropTypes.bool.isRequired,
+  enabled: PropTypes.func.isRequired,
   handleClick: PropTypes.func.isRequired,
 };
 

@@ -1,8 +1,10 @@
 import React from 'react';
 import io from 'socket.io-client';
 import PropTypes from 'prop-types';
+import { Grid, Row, Col } from 'react-bootstrap';
 import InteractiveTile from './interactivetile';
 import GameBoardTile from './gameboardtile';
+import GameControlPanel from './gamecontrolpanel';
 
 class GameBoard extends React.Component {
   constructor(props) {
@@ -249,28 +251,24 @@ class GameBoard extends React.Component {
   }
 
   render () {
-    return (<div id="game-container">
-      <div id="game-board-container" className={this.gameStateClass()}>
-        <div id="control-panel">
-          <div id="">
-            <span>Current Player:</span>
-            <span>{this.currentPlayerSymbol()}</span>
-            </div>
-            <button type="button" onClick={this.handleResetClick}>Reset</button>
-        </div>
-        <div id="interactive-row">
+    return (<Grid id="game-container">
+      <Row id="game-board-container" className={this.gameStateClass()}>
+        <Row id="control-panel">
+          <GameControlPanel handleReset={this.handleReset} gameInstance={this.props.gameInstance} />
+        </Row>
+        <Row id="interactive-row">
           {
             this.state.gameInstance.map((cell, index) => {
               return <InteractiveTile 
                 key={index} 
                 x={index} 
                 enabled={() => { return this.checkColumnFull(index); }} 
-                handleClick={(e) => { e.preventDefault(); if (this.state.gameOver) return;
+                handleClick={(e) => { e.preventDefault(); if (this.state.gameOver || !this.state.gameInstance.isActive) return;
                   this.handleClick(this.checkColumnFull(index), index); }} />
             })
           }
-        </div>
-        <div id="game-board">
+        </Row>
+        <Row id="game-board">
           {
             this.state.gameInstance.map((column, x) => {
               return (<div className="game-row" key={x}>{column.map((cell, y) => {
@@ -278,9 +276,9 @@ class GameBoard extends React.Component {
               );
             })
           }
-        </div>
-      </div>
-    </div> );
+        </Row>
+      </Row>
+    </Grid> );
   }
 }
 
