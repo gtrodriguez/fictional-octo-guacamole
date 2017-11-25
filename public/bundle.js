@@ -22832,6 +22832,7 @@ var GameBoard = function (_React$Component) {
     _this.resolvePlayerSymbol = _this.resolvePlayerSymbol.bind(_this);
     _this.tileEnabled = _this.tileEnabled.bind(_this);
     _this.checkForWinner = _this.checkForWinner.bind(_this);
+    _this.handleGameInvite = _this.handleGameInvite.bind(_this);
     return _this;
   }
 
@@ -23052,6 +23053,15 @@ var GameBoard = function (_React$Component) {
       return !(this.props.gameInstance.gameOver || !this.props.gameInstance.isActive || this.props.gameInstance.currentPlayer != this.props.user.username || !this.isSlotOpen(index));
     }
   }, {
+    key: 'handleGameInvite',
+    value: function handleGameInvite(inviteeEmail) {
+      this.props.connection.emit('invite-player', {
+        gameId: this.props.gameInstance._id,
+        senderUserName: this.props.user.username,
+        email: inviteeEmail
+      });
+    }
+  }, {
     key: 'render',
     value: function render() {
       var _this2 = this;
@@ -23067,6 +23077,7 @@ var GameBoard = function (_React$Component) {
             { id: 'control-panel' },
             _react2.default.createElement(_gamecontrolpanel2.default, {
               gameInstance: this.props.gameInstance,
+              handleGameInvite: this.handleGameInvite,
               user: this.props.user
             })
           ),
@@ -23126,7 +23137,6 @@ var GameBoard = function (_React$Component) {
 GameBoard.PropTypes = {
   gameInstance: _propTypes2.default.object.isRequired,
   connection: _propTypes2.default.object.isRequired,
-  handleWin: _propTypes2.default.func.isRequired,
   updateGameInstance: _propTypes2.default.func.isRequired,
   user: _propTypes2.default.object.isRequired
 };
@@ -23419,7 +23429,8 @@ var App = function (_React$Component) {
       gameId: null,
       gameInstance: null,
       allGames: [],
-      connection: null
+      connection: null,
+      invitedGames: []
     };
 
     _this.handleConnect = _this.handleConnect.bind(_this);
@@ -23456,6 +23467,10 @@ var App = function (_React$Component) {
 
       socket.on('retrieve-game', function (game) {
         _this2.handleGameRetrieval(game);
+      });
+
+      socket.on('invite-to-game', function (request) {
+        console.log(request);
       });
 
       this.setState({
@@ -50052,7 +50067,7 @@ var GameRoom = function (_React$Component) {
           // continue a previous game
           that.props.connection.emit('select-game', { _id: that.props.gameId });
         }
-      }, 1000);
+      }, 500);
     }
   }, {
     key: 'renderGameRoomContent',
@@ -53353,10 +53368,18 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var GameControlPanel = function (_React$Component) {
   _inherits(GameControlPanel, _React$Component);
 
-  function GameControlPanel() {
+  function GameControlPanel(props) {
     _classCallCheck(this, GameControlPanel);
 
-    return _possibleConstructorReturn(this, (GameControlPanel.__proto__ || Object.getPrototypeOf(GameControlPanel)).apply(this, arguments));
+    var _this = _possibleConstructorReturn(this, (GameControlPanel.__proto__ || Object.getPrototypeOf(GameControlPanel)).call(this, props));
+
+    _this.syncEmail = _this.syncEmail.bind(_this);
+    _this.disableInviteBtn = _this.disableInviteBtn.bind(_this);
+
+    _this.state = {
+      inviteeEmail: null
+    };
+    return _this;
   }
 
   _createClass(GameControlPanel, [{
@@ -53404,8 +53427,20 @@ var GameControlPanel = function (_React$Component) {
       );
     }
   }, {
+    key: 'syncEmail',
+    value: function syncEmail() {
+      this.setState({ inviteeEmail: document.getElementById('player-2-email').value });
+    }
+  }, {
+    key: 'disableInviteBtn',
+    value: function disableInviteBtn() {
+      return this.state.inviteeEmail === '' && this.state.inviteeEmail === null;
+    }
+  }, {
     key: 'renderActionItems',
     value: function renderActionItems() {
+      var _this2 = this;
+
       if (this.props.gameInstance) {
         if (this.props.gameInstance.isActive && this.props.user) {
           if (!this.props.gameInstance.gameOver) {
@@ -53506,12 +53541,21 @@ var GameControlPanel = function (_React$Component) {
                       null,
                       'Player 2 Email:'
                     ),
-                    _react2.default.createElement(_reactBootstrap.FormControl, { placeholder: 'player2@exampleEmail.com', type: 'text' })
+                    _react2.default.createElement(_reactBootstrap.FormControl, {
+                      placeholder: 'player2@exampleEmail.com',
+                      type: 'text',
+                      onChange: function onChange(e) {
+                        e.preventDefault();_this2.syncEmail();
+                      }
+                    })
                   ),
                   ' ',
                   _react2.default.createElement(
                     _reactBootstrap.Button,
-                    { bsStyle: 'primary' },
+                    { bsStyle: 'primary', disabled: this.disableInviteBtn(), onClick: function onClick(e) {
+                        e.preventDefault();
+                        _this2.props.handleGameInvite(_this2.state.inviteeEmail);
+                      } },
                     'Invite'
                   )
                 )
@@ -53539,7 +53583,8 @@ var GameControlPanel = function (_React$Component) {
 
 GameControlPanel.PropTypes = {
   gameInstance: _propTypes2.default.object,
-  user: _propTypes2.default.object.isRequired
+  user: _propTypes2.default.object.isRequired,
+  handleGameInvite: _propTypes2.default.func.isRequired
 };
 
 exports.default = GameControlPanel;

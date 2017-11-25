@@ -3,6 +3,17 @@ import PropTypes from 'prop-types'
 import {Form, FormControl, ControlLabel, FormGroup, Grid, Row, Col, Button} from 'react-bootstrap';
 
 class GameControlPanel extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.syncEmail = this.syncEmail.bind(this);
+    this.disableInviteBtn = this.disableInviteBtn.bind(this);
+
+    this.state = {
+      inviteeEmail: null,
+    };
+  }
+
   renderPlayer1Row () {
     return (<Row>
       <Col sm={3}>
@@ -19,6 +30,14 @@ class GameControlPanel extends React.Component {
       </Col>
       <Col sm={3}>{this.props.gameInstance && this.props.gameInstance.player2}</Col>
     </Row>);
+  }
+
+  syncEmail () {
+    this.setState({inviteeEmail: document.getElementById('player-2-email').value});
+  }
+
+  disableInviteBtn () {
+    return this.state.inviteeEmail === '' && this.state.inviteeEmail === null;
   }
 
   renderActionItems () {
@@ -64,10 +83,19 @@ class GameControlPanel extends React.Component {
                 {' '}
                 <FormGroup controlId="player-2-email">
                   <ControlLabel>Player 2 Email:</ControlLabel>
-                  <FormControl placeholder="player2@exampleEmail.com" type="text" />
+                  <FormControl
+                  placeholder="player2@exampleEmail.com"
+                  type="text"
+                  onChange={(e) => {e.preventDefault(); this.syncEmail();}}
+                  />
                 </FormGroup>
                 {' '}
-                <Button bsStyle="primary">Invite</Button>
+                <Button bsStyle="primary" disabled={this.disableInviteBtn()} onClick={(e) => {
+                  e.preventDefault();
+                  this.props.handleGameInvite(this.state.inviteeEmail);
+                }}>
+                  Invite
+                </Button>
               </Form>
             </Col>
           </Row>
@@ -88,6 +116,7 @@ class GameControlPanel extends React.Component {
 GameControlPanel.PropTypes = {
   gameInstance: PropTypes.object,
   user: PropTypes.object.isRequired,
+  handleGameInvite: PropTypes.func.isRequired,
 };
 
 export default GameControlPanel;

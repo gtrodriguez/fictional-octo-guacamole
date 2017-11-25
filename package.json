@@ -45,6 +45,7 @@
     "less": "^2.7.2",
     "mongodb": "^2.2.31",
     "mongoose": "^4.11.12",
+    "nodemailer": "^4.4.0",
     "prop-types": "^15.5.10",
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.5",

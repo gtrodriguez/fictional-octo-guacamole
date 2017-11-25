@@ -20,6 +20,7 @@ class App extends React.Component {
       gameInstance: null,
       allGames: [],
       connection: null,
+      invitedGames: [],
     };
 
     this.handleConnect = this.handleConnect.bind(this);
@@ -50,7 +51,11 @@ class App extends React.Component {
     });
 
     socket.on('retrieve-game', (game) => {
-        this.handleGameRetrieval(game);
+      this.handleGameRetrieval(game);
+    });
+
+    socket.on('invite-to-game', (request) => {
+      console.log(request);
     });
 
     this.setState({

@@ -30,6 +30,7 @@ class GameBoard extends React.Component {
     this.resolvePlayerSymbol = this.resolvePlayerSymbol.bind(this);
     this.tileEnabled = this.tileEnabled.bind(this);
     this.checkForWinner = this.checkForWinner.bind(this);
+    this.handleGameInvite = this.handleGameInvite.bind(this);
   }
 
   componentWillMount() {
@@ -240,12 +241,21 @@ class GameBoard extends React.Component {
           !this.isSlotOpen(index));
   }
 
+  handleGameInvite(inviteeEmail) {
+    this.props.connection.emit('invite-player', {
+      gameId: this.props.gameInstance._id,
+      senderUserName: this.props.user.username,
+      email: inviteeEmail,
+    });
+  }
+
   render () {
     return (<Grid id="game-container">
       <Row id="game-board-container" className={this.gameStateClass()}>
         <Row id="control-panel">
           <GameControlPanel
             gameInstance={this.props.gameInstance}
+            handleGameInvite={this.handleGameInvite}
             user={this.props.user}
           />
         </Row>
@@ -259,7 +269,7 @@ class GameBoard extends React.Component {
                     x={index} 
                     enabled={() => { return this.tileEnabled(index); }} 
                     handleClick={(e) => { e.preventDefault(); if (!this.tileEnabled(index)) return;
-                      this.handleClick(index); }} />
+                      this.handleClick(index); }}/>
                 })
               }
             </div>
@@ -286,7 +296,6 @@ class GameBoard extends React.Component {
 GameBoard.PropTypes = {
   gameInstance: PropTypes.object.isRequired,
   connection: PropTypes.object.isRequired,
-  handleWin: PropTypes.func.isRequired,
   updateGameInstance: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
 };

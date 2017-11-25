@@ -10,7 +10,7 @@ class GameRoom extends React.Component {
       if (that.props.gameId != null) { // continue a previous game
         that.props.connection.emit('select-game', { _id: that.props.gameId });
       }
-    }, 1000);
+    }, 500);
   }
 
   renderGameRoomContent() {

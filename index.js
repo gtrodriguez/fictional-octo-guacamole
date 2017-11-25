@@ -5,6 +5,7 @@ const path = require('path');
 const io = require('socket.io')(http);
 const mongoDB = require('mongodb');
 const mongoose = require('mongoose');
+const nodemailer = require('nodemailer');
 const mongoClient = mongoDB.MongoClient;
 const ObjectID = mongoDB.ObjectID;
 
@@ -26,6 +27,14 @@ var GameSession = {
   player1: 'ip address',
   player2: 'ip address',
 };
+
+var transporter = nodemailer.createTransport({
+ service: 'gmail',
+ auth: {
+        user: 'gamemaster.connectxgame@gmail.com',
+        pass: '0ul8UlLIDOdl'
+    }
+});
 
 mongoose.connect('mongodb://localhost:27017/connectx', { useMongoClient: true });
 
@@ -103,6 +112,8 @@ io.on('connection', function(socket){
           //if already exist then return this user
           Game.find(
             {$and: [{$or: [{'player1': username}, {'player2': username}]}, {'gameOver': false}]}, function (err, games) {
+            // set up personal socket.
+            socket.join(user._id);
             socket.emit('login-success', {user: user, allGames: games});
           });
         } else {
@@ -132,6 +143,44 @@ io.on('connection', function(socket){
   socket.on('invite-player', function(request){
     // tbd
     // send an email with a link to the game instance
+    User.findOne({email: request.email}, function (err, user) {
+      let mailOptions = {};
+
+      if (err)
+        return socket.emit('invite-failed', {reason: "some sort of error!"});
+
+      if (user) {
+        // attempt to send the message in app.
+        socket.to(user._id).emit('invite-to-game', request.gameId);
+        //create a link with an option.
+        mailOptions = {
+          from: 'gamemaster.connectxgame@gmail.com', // sender address
+          to: request.email, // list of receivers
+          subject: 'You\'ve been invited to a Connect X game!', // Subject line
+          html: `<div>
+            <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
+            <div><a href="http://localhost:3000/gameboard/${request.gameId}">Click here to join!</a></div>
+          </div>`
+        };
+      } else {
+        mailOptions = {
+          from: 'gamemaster.connectxgame@gmail.com', // sender address
+          to: request.email, // list of receivers
+          subject: 'You\'ve been invited to a Connect X game!', // Subject line
+          html: `<div>
+            <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
+            <div><a href="http://localhost:3000?inviteGameId=${request.gameId}">Click here to join!</a></div>
+          </div>`
+        };
+      }
+
+      transporter.sendMail(mailOptions, function (err, info) {
+         if(err)
+           console.log(err)
+         else
+           console.log(info);
+      });
+    });
   });
 
   socket.on('register-game', function(request){
@@ -155,7 +204,7 @@ io.on('connection', function(socket){
         socket.emit('register-success', game);
         io.to(game._id).emit('sync-game', game);
       });
-    })
+    });
   });
 
   socket.on('forfeit', function(request) {
