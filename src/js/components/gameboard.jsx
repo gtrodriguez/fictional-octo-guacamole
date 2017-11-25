@@ -194,7 +194,7 @@ class GameBoard extends React.Component {
   }
 
   isSlotOpen(index){
-    return this.props.gameInstance.scoreBoard[this.maxY][index] === undefined;
+    return this.props.gameInstance.scoreBoard[this.maxY-1][index] === undefined;
   }
 
   ///put in the first available slot starting from the top
