@@ -36,7 +36,7 @@ var transporter = nodemailer.createTransport({
     }
 });
 
-mongoose.connect('mongodb://localhost:27017/connectx', { useMongoClient: true });
+mongoose.connect('mongodb://sampleAdminUsername:QfJX4MKU1tk4@ds121686.mlab.com:21686/heroku_8fvch1mq', { useMongoClient: true });
 
 var db = mongoose.connection; 
 var dbCollection = db.collections;
