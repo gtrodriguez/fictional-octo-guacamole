@@ -1,120 +1,64 @@
 import React from 'react';
-import { render } from 'react-dom';
-import io from 'socket.io-client';
+import PropTypes from 'prop-types';
+import { Grid, Row, Col } from 'react-bootstrap';
 import GameBoard from '../components/gameboard';
-import GameSelector from '../components/gameselector';
-import UserControlPanel from '../components/usercontrolpanel';
 
 class GameRoom extends React.Component {
-  static alertWin() {
-    // window.alert("You won the game!");
-  }
-
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      user: null,
-      gameId: null,
-      gameInstance: null,
-      allGames: [],
-      connection: null
-    };
-
-    this.submitConnectUser = this.submitConnectUser.bind(this);
-    this.submitUserRegistration = this.submitUserRegistration.bind(this);
-    this.handleGameSelection = this.handleGameSelection.bind(this);
-    this.renderGameColumn = this.renderGameColumn.bind(this);
-  }
-
   componentDidMount() {
     const that = this;
-    const socket = io('http://localhost:3000');
-
-    socket.on('connect-success', (user) => {
-      this.setState({
-        user: user
-      });
-    });
-
-    socket.on('sync-game', (game) => {
-      this.setState({
-        gameInstance: game
-      });
-    })
-
-    socket.on('sync-game-list', (games) => {
-      this.setState({
-        allGames: games
-      });
-    });
-
-    this.setState({
-      connection: socket
-    });
+    setTimeout(function initialLoad() {
+      if (that.props.gameId != null) { // continue a previous game
+        that.props.connection.emit('select-game', { _id: that.props.gameId });
+      }
+    }, 1000);
   }
 
-  componentWillUnmount() {
-
-  }
-
-  handleGameSelection(gameId) {
-    const that = this;
-
-    if (gameId != null) {//continue a previous game
-      let gameInstance = this.allGames.find((game,index) => {
-        return game.Id === gameId;
-      });
-
-      this.state.setState({
-        gameId: gameId,
-        gameInstance: gameInstance
-      });
-    } else {
-      //create a new game
+  renderGameRoomContent() {
+    if (this.props.gameId != null) {
+      if (this.props.gameInstance != null) {
+        return (<GameBoard
+          gameInstance={this.props.gameInstance}
+          updateGameInstance={this.props.updateGameInstance}
+          connection={this.props.connection}
+          user={this.props.user}
+        />);
+      }
+      return <h3>Loading game...</h3>;
     }
-  }
-
-  submitUserRegistration(user) {
-    this.state.connection.emit('register', user);
-  }
-
-  submitConnectUser(email) {
-    this.state.connection.emit('connect', email);
-  }
-
-  renderGameColumn() {
-    if (this.user == null) {
-      return <div>You must first connect to the game server.</div>;
-    } else if (this.gameId != null) {
-      return <GameBoard handleWin={this.alertWin()}
-        gameInstance={this.state.gameInstance} />;
-    }
-    return (<GameSelector
-      games={this.state.allGames} 
-      handleGameSelection={this.handleGameSelection()} />);
+    return <div>An error occurred and a game was not selected.</div>;
   }
 
   render() {
-    return (<div id="connectx-root">
-      <h2 className="title">Welcome Back to Connect X!</h2>
-      <div id="game-container">
-        <div id="gameboard-column">
-          {
-            this.renderGameColumn()
-          }
-        </div>
-        <div id="communication-column">
-          <UserControlPanel
-            user={ this.state.user }
-            submitUserRegistration={ this.submitUserRegistration }
-            submitConnectUser={ this.submitConnectUser }
-          />
-        </div>
-      </div>
+    return (<div id="connectx-root" className="gameroom-page">
+      <Grid id="game-container">
+        <Row>
+          <Col sm={12}>
+            <h2 className="title">Game Room</h2>
+          </Col>
+        </Row>
+        <Row>
+          <Col sm={12} id="gameboard-column">
+            {this.renderGameRoomContent()}
+          </Col>
+        </Row>
+      </Grid>
     </div>
     );
   }
 }
+
+GameRoom.defaultProps = {
+  gameId: null,
+  gameInstance: null,
+};
+
+
+GameRoom.propTypes = {
+  connection: PropTypes.object.isRequired,
+  user: PropTypes.object.isRequired,
+  gameId: PropTypes.string,
+  gameInstance: PropTypes.object,
+  updateGameInstance: PropTypes.func.isRequired,
+};
 
 export default GameRoom;

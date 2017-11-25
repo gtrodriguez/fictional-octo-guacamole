@@ -10,7 +10,7 @@ const ObjectID = mongoDB.ObjectID;
 
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.set('view engine', 'ejs');
-app.get('/', function (req, res) {
+app.get('*', function (req, res) {
   res.sendFile(path.join(__dirname + '/example.html'));
 });
 
@@ -33,12 +33,10 @@ var db = mongoose.connection;
 var dbCollection = db.collections;
 var userSchema = mongoose.Schema({
   username: {
-      type: String,
-      lowercase: true
+      type: String
     },
     email: {
-      type: String,
-      lowercase: true
+      type: String
     }
 }, { runSettersOnQuery: true });
 
@@ -50,7 +48,8 @@ var gameSchema = mongoose.Schema({
   scoreBoard: [Array],
   completed: Boolean,
   isActive: Boolean,
-  lastUpdated: Date
+  lastUpdated: Date,
+  gameOver: Boolean
 });
 
 let User = mongoose.model('User', userSchema);
@@ -85,7 +84,7 @@ io.on('connection', function(socket){
         } else {
           console.log("found user", user);
           //if already exist then return this user
-          Game.find({$or: [{'player1': username}, {'player2': username}]}, function (err, games) {
+          Game.find({$and: [{$or: [{'player1': username}, {'player2': username}]}, {'gameOver': false}]}, function (err, games) {
             socket.emit('login-success', {user: user, allGames: games});
           });
         }
@@ -102,7 +101,8 @@ io.on('connection', function(socket){
         if (user) {
           console.log("found user", user);
           //if already exist then return this user
-          Game.find({$or: [{'player1': username}, {'player2': username}]}, function (err, games) {
+          Game.find(
+            {$and: [{$or: [{'player1': username}, {'player2': username}]}, {'gameOver': false}]}, function (err, games) {
             socket.emit('login-success', {user: user, allGames: games});
           });
         } else {
@@ -153,6 +153,7 @@ io.on('connection', function(socket){
 
         socket.join(game._id);
         socket.emit('register-success', game);
+        io.to(game._id).emit('sync-game', game);
       });
     })
   });
@@ -173,7 +174,8 @@ io.on('connection', function(socket){
       scoreBoard: gameMatrix,
       player1: username,
       isActive: false,
-      _id: new ObjectID()
+      _id: new ObjectID(),
+      gameOver: false
     };
 
     const newGame = new Game(gameInstance);
@@ -184,23 +186,24 @@ io.on('connection', function(socket){
     });
 
     socket.join(gameInstance._id);
-    socket.emit('retrieve-game', gameInstance);
+    socket.emit('new-game-success', gameInstance);
   })
 
   socket.on('player-submit-turn', function (msg) {
     Game.findOne({
-      _id: msg.gameId,
+      _id: msg._id,
     }, function (err, gameInstance){
         if (err) console.log(err);
+        console.log(JSON.stringify(msg),"XXX",JSON.stringify(gameInstance)); 
         gameInstance.scoreBoard = msg.scoreBoard;
-        gameInstance.currentPlayer = gameInstance.currentPlayer === gameInstance.player1 ? gameInstance.player2 : gameInstance.player1;
+        gameInstance.currentPlayer = msg.currentPlayer;
         gameInstance.lastUpdated = new Date();
+        gameInstance.gameOver = msg.gameOver;
         gameInstance.save();
 
-        //broadcast the game update to all the players subscribed to a game room
-        io.to(msg.gameId).emit('sync-game', function() {
-          gameInstance: gameInstance;
-        }); 
+        // broadcast the game update to all the players subscribed to a game room
+        // figure out how to broadcast to only the other player
+        io.to(msg._id).emit('sync-game', gameInstance); 
     });
   });
 

@@ -25,6 +25,7 @@
   border: 1px solid black;
   display: flex;
   flex-direction: column-reverse;
+  width: 162px;
 }
 .game-row,
 #interactive-row {
@@ -36,9 +37,6 @@
 .game-row {
   display: flex;
   flex-direction: row;
-}
-#game-board-container {
-  width: 226px;
 }
 .player-1 {
   color: black;
@@ -54,7 +52,7 @@
   border: 1px solid white;
 }
 #control-panel {
-  padding: 10px;
+  padding: 10px 0 10px 0;
 }
 button[type="button"] {
   margin: 5px 0;

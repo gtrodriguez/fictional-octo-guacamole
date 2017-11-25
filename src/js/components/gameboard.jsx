@@ -10,23 +10,29 @@ class GameBoard extends React.Component {
   constructor(props) {
     super(props);
 
+    // dimensions to use as bounds for checking
     this.maxX = 8;
     this.maxY = 8;
+    // for this iteration of the game, define the goal length
     this.targetLength = 4;
+    //used for calculating a winner, if any
+    this.runningScore = {
+      currentSelection : null,
+      longestRun: 0,
+    };
 
-    this.state = { gameInstance: null, currentPlayer: 1, timeStamp: null };
     this.updateScore = this.updateScore.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.checkGameBoard = this.checkGameBoard.bind(this);
-    this.checkColumnFull = this.checkColumnFull.bind(this);
+    this.isSlotOpen = this.isSlotOpen.bind(this);
     this.currentPlayerSymbol = this.currentPlayerSymbol.bind(this);
-    this.resetGame = this.resetGame.bind(this);
-    this.handleResetClick = this.handleResetClick.bind(this);
     this.gameStateClass = this.gameStateClass.bind(this);
+    this.resolvePlayerSymbol = this.resolvePlayerSymbol.bind(this);
+    this.tileEnabled = this.tileEnabled.bind(this);
+    this.checkForWinner = this.checkForWinner.bind(this);
   }
 
   componentWillMount() {
-    this.resetGame();
   }
 
   componentDidMount() {
@@ -35,93 +41,106 @@ class GameBoard extends React.Component {
   componentWillUnmount() {
   }
 
-  currentPlayerSymbol(reverse) {
-    return reverse ? ((this.state.currentPlayer === 1) ? 'O' : 'X') : (this.state.currentPlayer === 1)? 'X' : 'O';
+  currentPlayerSymbol(reverse) { // this will not work where the current player setting is not the user id
+    return reverse ? ((this.props.gameInstance.currentPlayer === this.props.gameInstance.player1) ? 'O' : 'X') : 
+    (this.props.gameInstance.currentPlayer === this.props.gameInstance.player1)? 'X' : 'O';
   }
 
-  updateScore(cellVal, runningScore) {
-    if (runningScore.currentSelection === null)
-      runningScore.currentSelection = cellVal;
+  resolvePlayerSymbol(playerName) {
+    if (playerName === this.props.gameInstance.player1) {
+      return 'X';
+    } else if (playerName === this.props.gameInstance.player2) {
+      return 'O';
+    }
+
+    return '';
+  }
+
+  updateScore(cellVal) {
+    if (this.runningScore.currentSelection === null)
+      this.runningScore.currentSelection = cellVal;
 
     if (cellVal) {
-      if (cellVal === runningScore.currentSelection) {
-        runningScore.currentComboLength += 1;
+      if (cellVal === this.runningScore.currentSelection) {
+        this.runningScore.currentComboLength += 1;
       } else {
-        runningScore.currentComboLength = 1;
-        runningScore.currentSelection = cellVal;
+        this.runningScore.currentComboLength = 1;
+        this.runningScore.currentSelection = cellVal;
       }
 
-      if (runningScore.currentComboLength === 4) {
+      if (this.runningScore.currentComboLength === 4) {
         return true;
       }
     } else {
-      runningScore.currentSelection = null;
-      runningScore.currentComboLength = 0;
+      this.runningScore.currentSelection = null;
+      this.runningScore.currentComboLength = 0;
     }
 
-    return false;   
+    return false;
   }
 
-  checkGameBoard() {
+  checkForWinner(gameInstance, direction){
+    if(this.runningScore.currentComboLength === this.targetLength){
+        console.log('Player ' + this.resolvePlayerSymbol(gameInstance.currentPlayer) + ' won ' + direction + '!');
+        return true;
+    }
+
+    return false;
+  }
+
+  checkGameBoard(gameInstance) {
     let consecutive = 0,
       gameWon = false;
     let x = 0;
     let y = 0;
     let tempX = 0;
     let tempY = 0;
-    let runningScore = {
+    let cellVal = null;
+
+    // reset the current game board checking object
+    this.runningScore = {
       currentSelection : null,
       longestRun: 0,
     };
-    let cellVal = null;
 
-    //horizontal
+    // horizontal
     for (x = 0; x < 8; x += 1) {
-      runningScore.longestRun = 0;
+      this.runningScore.longestRun = 0;
       for (y = 0; y < 8; y += 1) {
-        cellVal = this.state.gameInstance[x][y];
-        gameWon = this.updateScore(cellVal, runningScore);
-
-        if (gameWon) {
-          console.log('Player ' + this.currentPlayerSymbol() + ' won horizontally!');
+        cellVal = gameInstance.scoreBoard[x][y];
+        this.updateScore(cellVal);
+        if (this.checkForWinner(gameInstance, 'horizontally')) {
           return true;
         }
       }
     }
 
-    //vertical
+    // vertical
     for (x = 0; x < 8; x += 1) {
-      runningScore.longestRun = 0;
+      this.runningScore.longestRun = 0;
       for (y = 0; y < 8; y += 1) {
-        cellVal = this.state.gameInstance[y][x];
-        gameWon = this.updateScore(cellVal, runningScore);
-
-        if (gameWon) {
-          console.log('Player ' + this.currentPlayerSymbol() + ' won vertically!');
+        cellVal = gameInstance.scoreBoard[y][x];
+        this.updateScore(cellVal);
+        if (this.checkForWinner(gameInstance, 'vertically')) {
           return true;
         }
       }
     }
 
-    //diagonal down
+    // diagonal down
     for (y = 3; y < 8; y += 1) {
       x = 0;
       tempX = x;
       tempY = y;
       while (tempX < 8 && tempY >= 0) {
-        cellVal = this.state.gameInstance[tempX][tempY];
-        gameWon = this.updateScore(cellVal, runningScore);
-
-        if (gameWon) {
-          console.log('Player ' + this.currentPlayerSymbol() + ' won diagonal down!');
-          return true;
+        cellVal = gameInstance.scoreBoard[tempY][tempX];
+        this.updateScore(cellVal);
+        if (this.checkForWinner(gameInstance, 'diagonal down 1')) {
+         return true;
         }
-
         tempY -= 1;
         tempX += 1;
       }
-
-      y += 1;
     }
 
     for (x = 1; x <= 4; x += 1) {
@@ -129,40 +148,30 @@ class GameBoard extends React.Component {
       tempX = x;
       tempY = y;
       while (tempX < 8 && tempY >= 0) {
-        cellVal = this.state.gameInstance[tempX][tempY];
-        gameWon = this.updateScore(cellVal, runningScore);
-
-        if(gameWon){
-          console.log('Player ' + this.currentPlayerSymbol() + ' won diagonal down!!');
+        cellVal = gameInstance.scoreBoard[tempY][tempX];
+        this.updateScore(cellVal);
+        if (this.checkForWinner(gameInstance, 'diagonal down 2')) { 
           return true;
         }
-
         tempY -= 1;
         tempX += 1;
       }
-
-      x += 1;
     }
 
-    //diagonal up
+    // diagonal up
     for (y = 0; y <= 4; y += 1) {
       x = 0;
       tempX = x;
       tempY = y;
       while (tempX < 8 && tempY < 8) {
-        cellVal = this.state.gameInstance[tempX][tempY];
-        gameWon = this.updateScore(cellVal, runningScore);
-
-        if(gameWon){
-          console.log('Player ' + this.currentPlayerSymbol() + ' won diagonal up!');
+        cellVal = gameInstance.scoreBoard[tempY][tempX];
+        this.updateScore(cellVal);
+        if (this.checkForWinner(gameInstance, 'diagonal up 1')) {
           return true;
         }
-
         tempY += 1;
         tempX += 1;
       }
-
-      y += 1;
     }
 
     for (x = 1; x <= 4; x += 1) {
@@ -170,125 +179,116 @@ class GameBoard extends React.Component {
       tempX = x;
       tempY = y;
       while (tempX < 8 && tempY < 8) {
-        cellVal = this.state.gameInstance[tempX][tempY];
-        gameWon = this.updateScore(cellVal, runningScore);
-
-        if (gameWon) {
-          console.log('Player ' + this.currentPlayerSymbol() + ' won diagonal up!!');
+        cellVal = gameInstance.scoreBoard[tempY][tempX];
+        this.updateScore(cellVal);
+        if (this.checkForWinner(gameInstance, 'diagonal up 2')) {
           return true;
         }
-
         tempY += 1;
         tempX += 1;
       }
-
-      x += 1;
-    }   
+    }
 
     return false;
   }
 
-  checkColumnFull(index){
-    return this.state.gameInstance[index][this.maxX] === 0;
+  isSlotOpen(index){
+    return this.props.gameInstance.scoreBoard[this.maxY][index] === undefined;
   }
 
-  ///put in the first available slot
-  handleClick(enabled, index) {
-    if (this.state.gameOver) {
-      return;
-    }
+  ///put in the first available slot starting from the top
+  handleClick(index) {
+    var newGameInstance = Object.assign({}, this.props.gameInstance);
 
     for (var x = 0; x < this.maxX; x += 1) {
-      if (this.state.gameInstance[x][index] === 0) {
-        var copy = this.state.gameInstance;
-        copy[x][index] = this.state.currentPlayer;
-
-        this.setState({ gameInstance: copy });
-
+      if (newGameInstance.scoreBoard[x][index] === 0) {
+        newGameInstance.scoreBoard[x][index] = this.props.gameInstance.currentPlayer;
         break;
       }
     }
 
-    if (this.checkGameBoard()) {
-      this.setState({ gameOver: true });
-      return;
-    }
-
-    if (this.state.currentPlayer === 1) {
-      this.setState({ currentPlayer: 2 });
+    if (this.checkGameBoard(newGameInstance)) {
+      newGameInstance.gameOver = true;
     } else {
-      this.setState({ currentPlayer: 1 });
-    } 
-  }
-
-  handleResetClick() {
-    if(window.confirm('you sure?')){
-      this.resetGame();
-    }
-  }
-
-  resetGame () {
-    var gameMatrix = new Array(8);
-    for (var i = 0; i < 8; i += 1) {
-      gameMatrix[i] = new Array(8);
-      gameMatrix[i].fill(0);
+      if (newGameInstance.currentPlayer === newGameInstance.player1) {
+        newGameInstance.currentPlayer = newGameInstance.player2;
+      } else {
+        newGameInstance.currentPlayer = newGameInstance.player1;
+      }
     }
 
-    this.setState({
-      gameInstance: gameMatrix,
-      gameOver: false,
-    });
+    this.props.updateGameInstance(newGameInstance);
+    this.submitGameUpdate(newGameInstance);
   }
 
   gameStateClass () {
     var className = '';
-
-    if(this.state.gameOver){
+    if(this.props.gameInstance.gameOver){
       className += 'game-over';
     }
-
     return className;
+  }
+
+  submitGameUpdate(newGameInstance) {
+    this.props.connection.emit('player-submit-turn', newGameInstance);
+  }
+
+  tileEnabled(index) {
+    return !(this.props.gameInstance.gameOver ||
+          !this.props.gameInstance.isActive ||
+          this.props.gameInstance.currentPlayer != this.props.user.username ||
+          !this.isSlotOpen(index));
   }
 
   render () {
     return (<Grid id="game-container">
       <Row id="game-board-container" className={this.gameStateClass()}>
         <Row id="control-panel">
-          <GameControlPanel handleReset={this.handleReset} gameInstance={this.props.gameInstance} />
+          <GameControlPanel
+            gameInstance={this.props.gameInstance}
+            user={this.props.user}
+          />
         </Row>
-        <Row id="interactive-row">
-          {
-            this.state.gameInstance.map((cell, index) => {
-              return <InteractiveTile 
-                key={index} 
-                x={index} 
-                enabled={() => { return this.checkColumnFull(index); }} 
-                handleClick={(e) => { e.preventDefault(); if (this.state.gameOver || !this.state.gameInstance.isActive) return;
-                  this.handleClick(this.checkColumnFull(index), index); }} />
-            })
-          }
+        <Row>
+          <Col>
+            <div id="interactive-row">
+              {
+                this.props.gameInstance.scoreBoard.map((cell, index) => {
+                  return <InteractiveTile 
+                    key={index} 
+                    x={index} 
+                    enabled={() => { return this.tileEnabled(index); }} 
+                    handleClick={(e) => { e.preventDefault(); if (!this.tileEnabled(index)) return;
+                      this.handleClick(index); }} />
+                })
+              }
+            </div>
+          </Col>
         </Row>
-        <Row id="game-board">
-          {
-            this.state.gameInstance.map((column, x) => {
-              return (<div className="game-row" key={x}>{column.map((cell, y) => {
-                return <GameBoardTile key={y} data-x={x} data-y={y} value={cell} />})}</div>
-              );
-            })
-          }
+        <Row>
+          <Col>
+            <div id="game-board">
+              {
+                this.props.gameInstance.scoreBoard.map((column, x) => {
+                  return (<div className="game-row" key={x}>{column.map((cell, y) => {
+                    return <GameBoardTile key={y} data-x={x} data-y={y} value={this.resolvePlayerSymbol(cell)} />})}</div>
+                  );
+                })
+              }
+            </div>
+          </Col>
         </Row>
       </Row>
     </Grid> );
   }
 }
 
-GameBoard.defaultProps = {
-  gameInstance: null
-};
-
 GameBoard.PropTypes = {
-  gameInstance: PropTypes.object,
-  handleWin: PropTypes.func.isRequired
+  gameInstance: PropTypes.object.isRequired,
+  connection: PropTypes.object.isRequired,
+  handleWin: PropTypes.func.isRequired,
+  updateGameInstance: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 export default GameBoard;

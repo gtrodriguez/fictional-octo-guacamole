@@ -1,16 +1,135 @@
 import React from 'react';
 import { render } from 'react-dom';
-import { BrowserRouter, Route } from 'react-router-dom';
-import Landing from './containers/landing';
-import GameRoom from './containers/gameroom';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import Landing from './pages/landing';
+import GameRoom from './pages/gameroom';
+import GameList from './pages/gamelist';
+import Header from './components/header';
 
 class App extends React.Component {
+    alertWin() {
+    window.alert('You won the game!');
+  }
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      user: null,
+      gameId: null,
+      gameInstance: null,
+      allGames: [],
+      connection: null,
+    };
+
+    this.handleConnect = this.handleConnect.bind(this);
+    this.handleGameRetrieval = this.handleGameRetrieval.bind(this);
+    this.alertWin = this.alertWin.bind(this);
+    this.updateGameInstance = this.updateGameInstance.bind(this);
+  }
+
+  componentWillMount() {
+    const that = this;
+    const socket = io();
+    var cachedUser = sessionStorage.getItem('user');
+
+    socket.on('sync-game', (game) => {
+      this.setState({
+        gameInstance: game
+      });
+    });
+
+    socket.on('sync-game-list', (games) => {
+      this.setState({
+        allGames: games
+      });
+    });
+
+    socket.on('login-success', (response) => {
+      this.handleConnect(response);
+    });
+
+    socket.on('retrieve-game', (game) => {
+        this.handleGameRetrieval(game);
+    });
+
+    this.setState({
+      connection: socket
+    });
+
+    if(cachedUser != null){
+      let user = JSON.parse(cachedUser);
+      socket.emit('login', user.username);
+    }
+  }
+
+  componentWillUnmount() {
+  }
+
+  handleConnect(response) {
+    sessionStorage.setItem('user', JSON.stringify(response.user));
+    console.log(response);
+    this.setState({
+      user: response.user,
+      allGames: response.allGames,
+    });
+  }
+
+  handleGameRetrieval(gameObj) {
+    console.log(gameObj);
+
+    if(!gameObj.isActive) {
+      var newGameList = this.state.allGames.slice();
+      newGameList.push(gameObj);
+      this.setState({
+        allGames: newGameList
+      });
+    }
+
+    this.setState({
+      gameInstance: gameObj,
+      gameId: gameObj._id,
+    });
+  }
+
+  updateGameInstance(newGameInstance) {
+    this.setState({
+      gameInstance: newGameInstance
+    });
+  }
+
   render() {
     return (
       <BrowserRouter>
         <div className="app">
-          <Route path="/" component={Landing} />
-          <Route path="/gameroom" component={GameRoom} />
+          <Header user={this.state.user}/>
+          <Switch>
+            <Route exact path="/"
+              render = {({ history }) => (<Landing user={this.state.user}
+                                      connection={this.state.connection}
+                                      history={history}
+                                      handleConnect={this.handleConnect}
+                                      />)} />
+            <Route path="/gameroom/:gameId"
+              render = {({ history, match }) => {
+                                    console.log(match,'match');
+                                    return (<GameRoom user={this.state.user}
+                                         connection={this.state.connection}
+                                         gameId={match.params.gameId}
+                                         gameInstance={this.state.gameInstance}
+                                         updateGameInstance={this.updateGameInstance}
+                                         history={history}
+                                    />);}}/>
+            <Route path="/gamelist"
+                   render={({ history, match }) => {
+                                            console.log(match,'match');
+                                            return (<GameList
+                                            connection={this.state.connection}
+                                            user={this.state.user} history={history}
+                                            match={match} allGames={this.state.allGames} 
+                                            handleGameRetrieval={this.handleGameRetrieval} />
+                                            );}} />
+          </Switch>
         </div>
       </BrowserRouter>
     );
