@@ -23003,7 +23003,7 @@ var GameBoard = function (_React$Component) {
   }, {
     key: 'isSlotOpen',
     value: function isSlotOpen(index) {
-      return this.props.gameInstance.scoreBoard[this.maxY - 1][index] === undefined;
+      return !this.props.gameInstance.scoreBoard[this.maxY - 1][index];
     }
 
     ///put in the first available slot starting from the top
@@ -38638,7 +38638,7 @@ var Landing = function (_React$Component) {
       var _this2 = this;
 
       this.props.connection.on('register-success', function (response) {
-        _this2.handleConnect(response);
+        _this2.props.handleConnect(response);
         _this2.props.history.push('/gamelist');
       });
 
@@ -38749,7 +38749,8 @@ Landing.defaultProps = {
 Landing.propTypes = {
   user: _propTypes2.default.object,
   history: _propTypes2.default.object.isRequired,
-  connection: _propTypes2.default.object.isRequired
+  connection: _propTypes2.default.object.isRequired,
+  handleConnect: _propTypes2.default.func.isRequired
 };
 
 exports.default = Landing;

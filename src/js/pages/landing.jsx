@@ -14,7 +14,7 @@ class Landing extends React.Component {
 
   componentDidMount() {
     this.props.connection.on('register-success', (response) => {
-      this.handleConnect(response);
+      this.props.handleConnect(response);
       this.props.history.push('/gamelist');
     });
 
@@ -87,6 +87,7 @@ Landing.propTypes = {
   user: PropTypes.object,
   history: PropTypes.object.isRequired,
   connection: PropTypes.object.isRequired,
+  handleConnect: PropTypes.func.isRequired,
 };
 
 export default Landing;
