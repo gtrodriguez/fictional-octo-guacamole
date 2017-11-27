@@ -15,21 +15,17 @@ class GameControlPanel extends React.Component {
   }
 
   renderPlayer1Row () {
-    return (<Row>
-      <Col sm={3}>
-        <strong>Player 1:</strong>
-      </Col>
-      <Col sm={3}>{this.props.gameInstance && this.props.gameInstance.player1}</Col>
-    </Row>);
+    return (<div>
+      <strong className="player-label">Player 1:</strong>
+      {this.props.gameInstance && this.props.gameInstance.player1}
+    </div>);
   }
 
   renderPlayer2Row () {
-    return (<Row>
-      <Col sm={3}>
-        <strong>Player 2:</strong>
-      </Col>
-      <Col sm={3}>{this.props.gameInstance && this.props.gameInstance.player2}</Col>
-    </Row>);
+    return (<div>
+      <strong className="player-label">Player 2:</strong>
+      {this.props.gameInstance && this.props.gameInstance.player2}
+    </div>);
   }
 
   syncEmail () {
@@ -44,72 +40,60 @@ class GameControlPanel extends React.Component {
     if (this.props.gameInstance) {
       if (this.props.gameInstance.isActive && this.props.user) {
         if (!this.props.gameInstance.gameOver) {
-          return (<Row>
-            <Col sm={3}>
-              <strong>Current Player:</strong>
-            </Col>
-            <Col sm={3}>
+          return (<div>
+              <strong className="current-player-label">Current Player:</strong>
               {this.props.gameInstance.currentPlayer}
-            </Col>
-          </Row>);
+          </div>);
         } else if (this.props.gameInstance.currentPlayer === this.props.user.username){
-          return (<Row>
-            <Col sm={4}>
-              <strong>Congratulations, you've won!!! Woot!</strong>
-            </Col>
-          </Row>);
+          return (<div>
+            <strong>Congratulations, you've won!!! Woot!</strong>
+          </div>);
         } else {
-          return (<Row>
-            <Col sm={4}>
+          return (<div>
               <strong>Sorry, yo! Better luck next time.</strong>
-            </Col>
-          </Row>);
+          </div>);
         }
       } else {
-        return <Row>
-          <Row>
-            <Col sm={2}>
-              <strong>This game has not been started yet!</strong>
-            </Col>
-          </Row>
-          <Row>
-            <Col sm={12}>
-              <strong>Please send this code to another player! (email not implemented yet)</strong>
-              <Form inline>
-                <FormGroup controlId="active-game-id">
-                  <ControlLabel>GameId:</ControlLabel>
-                  <FormControl readOnly type="text" value={this.props.gameInstance._id} />
-                </FormGroup>
-                {' '}
-                <FormGroup controlId="player-2-email">
-                  <ControlLabel>Player 2 Email:</ControlLabel>
-                  <FormControl
-                  placeholder="player2@exampleEmail.com"
-                  type="text"
-                  onChange={(e) => {e.preventDefault(); this.syncEmail();}}
-                  />
-                </FormGroup>
-                {' '}
-                <Button bsStyle="primary" disabled={this.disableInviteBtn()} onClick={(e) => {
-                  e.preventDefault();
-                  this.props.handleGameInvite(this.state.inviteeEmail);
-                }}>
-                  Invite
-                </Button>
-              </Form>
-            </Col>
-          </Row>
-        </Row>;
+        return <div>
+          <div>
+            <strong>This game has not been started yet!</strong>
+          </div>
+          <div>
+            <strong>Please send this code to another player! (email not implemented yet)</strong>
+            <Form inline>
+              <FormGroup controlId="active-game-id">
+                <ControlLabel>GameId:</ControlLabel>
+                <FormControl readOnly type="text" value={this.props.gameInstance._id} />
+              </FormGroup>
+              {' '}
+              <FormGroup controlId="player-2-email">
+                <ControlLabel>Player 2 Email:</ControlLabel>
+                <FormControl
+                placeholder="player2@exampleEmail.com"
+                type="text"
+                onChange={(e) => {e.preventDefault(); this.syncEmail();}}
+                />
+              </FormGroup>
+              {' '}
+              <Button bsStyle="primary" disabled={this.disableInviteBtn()} onClick={(e) => {
+                e.preventDefault();
+                this.props.handleGameInvite(this.state.inviteeEmail);
+              }}>
+                Invite
+              </Button>
+            </Form>
+          </div>
+        </div>;
       }
     }
   }
 
   render() {
-    return  <Grid>
+    return  <div>
         {this.renderPlayer1Row()}
         {this.renderPlayer2Row()}
         {this.renderActionItems()}
-    </Grid>;
+    </div>;
   }
 }
 

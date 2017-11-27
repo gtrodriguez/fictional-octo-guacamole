@@ -250,46 +250,42 @@ class GameBoard extends React.Component {
   }
 
   render () {
-    return (<Grid id="game-container">
-      <Row id="game-board-container" className={this.gameStateClass()}>
-        <Row id="control-panel">
+    return (<div id="game-container">
+      <div id="game-board-container" className={this.gameStateClass()}>
+        <div id="control-panel">
           <GameControlPanel
             gameInstance={this.props.gameInstance}
             handleGameInvite={this.handleGameInvite}
             user={this.props.user}
           />
-        </Row>
-        <Row>
-          <Col>
-            <div id="interactive-row">
-              {
-                this.props.gameInstance.scoreBoard.map((cell, index) => {
-                  return <InteractiveTile 
-                    key={index} 
-                    x={index} 
-                    enabled={() => { return this.tileEnabled(index); }} 
-                    handleClick={(e) => { e.preventDefault(); if (!this.tileEnabled(index)) return;
-                      this.handleClick(index); }}/>
-                })
-              }
-            </div>
-          </Col>
-        </Row>
-        <Row>
-          <Col>
-            <div id="game-board">
-              {
-                this.props.gameInstance.scoreBoard.map((column, x) => {
-                  return (<div className="game-row" key={x}>{column.map((cell, y) => {
-                    return <GameBoardTile key={y} data-x={x} data-y={y} value={this.resolvePlayerSymbol(cell)} />})}</div>
-                  );
-                })
-              }
-            </div>
-          </Col>
-        </Row>
-      </Row>
-    </Grid> );
+        </div>
+        <div>
+          <div id="interactive-row">
+            {
+              this.props.gameInstance.scoreBoard.map((cell, index) => {
+                return <InteractiveTile 
+                  key={index} 
+                  x={index} 
+                  enabled={() => { return this.tileEnabled(index); }} 
+                  handleClick={(e) => { e.preventDefault(); if (!this.tileEnabled(index)) return;
+                    this.handleClick(index); }}/>
+              })
+            }
+          </div>
+        </div>
+        <div>
+          <div id="game-board">
+            {
+              this.props.gameInstance.scoreBoard.map((column, x) => {
+                return (<div className="game-row" key={x}>{column.map((cell, y) => {
+                  return <GameBoardTile key={y} data-x={x} data-y={y} value={this.resolvePlayerSymbol(cell)} />})}</div>
+                );
+              })
+            }
+          </div>
+        </div>
+      </div>
+    </div> );
   }
 }
 

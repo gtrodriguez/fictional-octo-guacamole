@@ -9,6 +9,7 @@ class Header extends React.Component {
     if (this.props.user != null) {
       return (<Nav className="authenticated-section">
         <RouteNavItem href="/gamelist">Games</RouteNavItem>
+        <RouteNavItem href="/logout">Log Out</RouteNavItem>
       </Nav>);
     }
 

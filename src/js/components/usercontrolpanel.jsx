@@ -49,10 +49,12 @@ class UserControlPanel extends React.Component {
     if (this.props.user) {
       return (<Grid id="user-details">
             <Row>
-              <ControlLabel htmlFor="username">UserName: {this.props.user.username}</ControlLabel>
+              <ControlLabel className="login-label" htmlFor="username">UserName:</ControlLabel>
+              {this.props.user.username}
             </Row>
             <Row>
-              <ControlLabel htmlFor="email">Email: {this.props.user.email}</ControlLabel>
+              <ControlLabel className="login-label" htmlFor="email">Email:</ControlLabel>
+              {this.props.user.email}
             </Row>
           </Grid>
         );
@@ -62,10 +64,10 @@ class UserControlPanel extends React.Component {
           <Grid id="user-details">
             <Row>
               <Row>
-                <ControlLabel htmlFor="username">UserName: <input type="text" id="username" name="username" /></ControlLabel>
+                <ControlLabel className="login-label" htmlFor="username">UserName: <input type="text" id="username" name="username" /></ControlLabel>
               </Row>
               <Row>
-                <ControlLabel htmlFor="email">Email: <input type="text" id="email" name="email" /></ControlLabel>
+                <ControlLabel className="login-label" htmlFor="email">Email: <input type="text" id="email" name="email" /></ControlLabel>
               </Row>
               <Row>
                 <Button
@@ -80,7 +82,7 @@ class UserControlPanel extends React.Component {
             <hr/>
             <Row>
               <Row>
-                <ControlLabel htmlFor="active-username">Username: <input type="text" id="active-username" name="active-username" /></ControlLabel>
+                <ControlLabel className="login-label" htmlFor="active-username">Username: <input type="text" id="active-username" name="active-username" /></ControlLabel>
               </Row>
               <Row>
                 <Button

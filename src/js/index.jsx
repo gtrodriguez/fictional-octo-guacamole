@@ -5,6 +5,7 @@ import Landing from './pages/landing';
 import GameRoom from './pages/gameroom';
 import GameList from './pages/gamelist';
 import Header from './components/header';
+import Logout from './pages/logout';
 
 class App extends React.Component {
     alertWin() {
@@ -27,12 +28,12 @@ class App extends React.Component {
     this.handleGameRetrieval = this.handleGameRetrieval.bind(this);
     this.alertWin = this.alertWin.bind(this);
     this.updateGameInstance = this.updateGameInstance.bind(this);
+    this.resetState = this.resetState.bind(this);
   }
 
   componentWillMount() {
     const that = this;
     const socket = io();
-    var cachedUser = sessionStorage.getItem('user');
 
     socket.on('sync-game', (game) => {
       this.setState({
@@ -61,10 +62,14 @@ class App extends React.Component {
     this.setState({
       connection: socket
     });
+  }
 
-    if(cachedUser != null){
+  componentDidMount() {
+    var cachedUser = sessionStorage.getItem('user');
+
+    if(cachedUser != null && !this.state.user){
       let user = JSON.parse(cachedUser);
-      socket.emit('login', user.username);
+      this.state.connection.emit('login', user.username);
     }
   }
 
@@ -73,7 +78,6 @@ class App extends React.Component {
 
   handleConnect(response) {
     sessionStorage.setItem('user', JSON.stringify(response.user));
-    console.log(response);
     this.setState({
       user: response.user,
       allGames: response.allGames,
@@ -81,8 +85,6 @@ class App extends React.Component {
   }
 
   handleGameRetrieval(gameObj) {
-    console.log(gameObj);
-
     if(!gameObj.isActive) {
       var newGameList = this.state.allGames.slice();
       newGameList.push(gameObj);
@@ -103,6 +105,16 @@ class App extends React.Component {
     });
   }
 
+  resetState() {
+    this.setState({
+      user: null,
+      gameId: null,
+      gameInstance: null,
+      allGames: [],
+      invitedGames: []
+    });
+  }
+
   render() {
     return (
       <BrowserRouter>
@@ -115,7 +127,7 @@ class App extends React.Component {
                                       history={history}
                                       handleConnect={this.handleConnect}
                                       />)} />
-            <Route path="/gameroom/:gameId"
+            <Route exact path="/gameroom/:gameId"
               render = {({ history, match }) => {
                                     console.log(match,'match');
                                     return (<GameRoom user={this.state.user}
@@ -125,15 +137,25 @@ class App extends React.Component {
                                          updateGameInstance={this.updateGameInstance}
                                          history={history}
                                     />);}}/>
-            <Route path="/gamelist"
-                   render={({ history, match }) => {
-                                            console.log(match,'match');
-                                            return (<GameList
-                                            connection={this.state.connection}
-                                            user={this.state.user} history={history}
-                                            match={match} allGames={this.state.allGames} 
-                                            handleGameRetrieval={this.handleGameRetrieval} />
-                                            );}} />
+            <Route
+              path="/gamelist"
+              exact
+              render={({ history, match }) => {
+                console.log(match,'match');
+                return (<GameList
+                connection={this.state.connection}
+                user={this.state.user} history={history}
+                match={match} allGames={this.state.allGames} 
+                handleGameRetrieval={this.handleGameRetrieval} />
+                );}}
+              />
+            <Route
+              exact
+              path="/logout"
+              render={({history}) => {
+                return <Logout history={history} resetState={this.resetState} />;
+              }}
+              />
           </Switch>
         </div>
       </BrowserRouter>

@@ -28,7 +28,6 @@ class Landing extends React.Component {
   }
 
   submitConnectUser(username) {
-    console.log('submit username connection', username);
     this.props.connection.emit('login', username);
   }
 
@@ -52,20 +51,18 @@ class Landing extends React.Component {
           </Col>
         </Row>
         <Row>
-          <Col sm={9}>
+          <Col sm={7}>
             Connect X is an multiplayer game project made to experiment with React with.
             Long term goals include adding an artificial intelligent opponent,
             modifying the idea of gravity, and introducing new kinds of play options to
             the classic game.
+            <div>
+              {
+                this.renderGameColumn()
+              }
+            </div>
           </Col>
-        </Row>
-        <Row>
-          <Col sm={3} id="gameboard-column">
-            {
-              this.renderGameColumn()
-            }
-          </Col>
-          <Col sm={6} id="communication-column">
+          <Col sm={3} id="communication-column">
             <UserControlPanel
               user={this.props.user}
               submitUserRegistration={this.submitUserRegistration}

@@ -4,13 +4,17 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import GameBoard from '../components/gameboard';
 
 class GameRoom extends React.Component {
+  componentWillReceiveProps(nextProps) {
+    // if parent socket.io connection is initialized in this page, then load the necessary components.
+    if (!this.props.user && nextProps.user) {
+      this.props.connection.emit('select-game', { _id: this.props.gameId });
+    }
+  }
+
   componentDidMount() {
-    const that = this;
-    setTimeout(function initialLoad() {
-      if (that.props.gameId != null) { // continue a previous game
-        that.props.connection.emit('select-game', { _id: that.props.gameId });
-      }
-    }, 500);
+    if (this.props.user) {
+      this.props.connection.emit('select-game', { _id: this.props.gameId });
+    }
   }
 
   renderGameRoomContent() {
@@ -50,12 +54,13 @@ class GameRoom extends React.Component {
 GameRoom.defaultProps = {
   gameId: null,
   gameInstance: null,
+  user: null,
 };
 
 
 GameRoom.propTypes = {
   connection: PropTypes.object.isRequired,
-  user: PropTypes.object.isRequired,
+  user: PropTypes.object,
   gameId: PropTypes.string,
   gameInstance: PropTypes.object,
   updateGameInstance: PropTypes.func.isRequired,

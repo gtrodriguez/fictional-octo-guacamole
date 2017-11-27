@@ -12452,20 +12452,20 @@ var UserControlPanel = function (_React$Component) {
             null,
             _react2.default.createElement(
               _reactBootstrap.ControlLabel,
-              { htmlFor: 'username' },
-              'UserName: ',
-              this.props.user.username
-            )
+              { className: 'login-label', htmlFor: 'username' },
+              'UserName:'
+            ),
+            this.props.user.username
           ),
           _react2.default.createElement(
             _reactBootstrap.Row,
             null,
             _react2.default.createElement(
               _reactBootstrap.ControlLabel,
-              { htmlFor: 'email' },
-              'Email: ',
-              this.props.user.email
-            )
+              { className: 'login-label', htmlFor: 'email' },
+              'Email:'
+            ),
+            this.props.user.email
           )
         );
       }
@@ -12481,7 +12481,7 @@ var UserControlPanel = function (_React$Component) {
             null,
             _react2.default.createElement(
               _reactBootstrap.ControlLabel,
-              { htmlFor: 'username' },
+              { className: 'login-label', htmlFor: 'username' },
               'UserName: ',
               _react2.default.createElement('input', { type: 'text', id: 'username', name: 'username' })
             )
@@ -12491,7 +12491,7 @@ var UserControlPanel = function (_React$Component) {
             null,
             _react2.default.createElement(
               _reactBootstrap.ControlLabel,
-              { htmlFor: 'email' },
+              { className: 'login-label', htmlFor: 'email' },
               'Email: ',
               _react2.default.createElement('input', { type: 'text', id: 'email', name: 'email' })
             )
@@ -12521,7 +12521,7 @@ var UserControlPanel = function (_React$Component) {
             null,
             _react2.default.createElement(
               _reactBootstrap.ControlLabel,
-              { htmlFor: 'active-username' },
+              { className: 'login-label', htmlFor: 'active-username' },
               'Username: ',
               _react2.default.createElement('input', { type: 'text', id: 'active-username', name: 'active-username' })
             )
@@ -23067,13 +23067,13 @@ var GameBoard = function (_React$Component) {
       var _this2 = this;
 
       return _react2.default.createElement(
-        _reactBootstrap.Grid,
+        'div',
         { id: 'game-container' },
         _react2.default.createElement(
-          _reactBootstrap.Row,
+          'div',
           { id: 'game-board-container', className: this.gameStateClass() },
           _react2.default.createElement(
-            _reactBootstrap.Row,
+            'div',
             { id: 'control-panel' },
             _react2.default.createElement(_gamecontrolpanel2.default, {
               gameInstance: this.props.gameInstance,
@@ -23082,48 +23082,40 @@ var GameBoard = function (_React$Component) {
             })
           ),
           _react2.default.createElement(
-            _reactBootstrap.Row,
+            'div',
             null,
             _react2.default.createElement(
-              _reactBootstrap.Col,
-              null,
-              _react2.default.createElement(
-                'div',
-                { id: 'interactive-row' },
-                this.props.gameInstance.scoreBoard.map(function (cell, index) {
-                  return _react2.default.createElement(_interactivetile2.default, {
-                    key: index,
-                    x: index,
-                    enabled: function enabled() {
-                      return _this2.tileEnabled(index);
-                    },
-                    handleClick: function handleClick(e) {
-                      e.preventDefault();if (!_this2.tileEnabled(index)) return;
-                      _this2.handleClick(index);
-                    } });
-                })
-              )
+              'div',
+              { id: 'interactive-row' },
+              this.props.gameInstance.scoreBoard.map(function (cell, index) {
+                return _react2.default.createElement(_interactivetile2.default, {
+                  key: index,
+                  x: index,
+                  enabled: function enabled() {
+                    return _this2.tileEnabled(index);
+                  },
+                  handleClick: function handleClick(e) {
+                    e.preventDefault();if (!_this2.tileEnabled(index)) return;
+                    _this2.handleClick(index);
+                  } });
+              })
             )
           ),
           _react2.default.createElement(
-            _reactBootstrap.Row,
+            'div',
             null,
             _react2.default.createElement(
-              _reactBootstrap.Col,
-              null,
-              _react2.default.createElement(
-                'div',
-                { id: 'game-board' },
-                this.props.gameInstance.scoreBoard.map(function (column, x) {
-                  return _react2.default.createElement(
-                    'div',
-                    { className: 'game-row', key: x },
-                    column.map(function (cell, y) {
-                      return _react2.default.createElement(_gameboardtile2.default, { key: y, 'data-x': x, 'data-y': y, value: _this2.resolvePlayerSymbol(cell) });
-                    })
-                  );
-                })
-              )
+              'div',
+              { id: 'game-board' },
+              this.props.gameInstance.scoreBoard.map(function (column, x) {
+                return _react2.default.createElement(
+                  'div',
+                  { className: 'game-row', key: x },
+                  column.map(function (cell, y) {
+                    return _react2.default.createElement(_gameboardtile2.default, { key: y, 'data-x': x, 'data-y': y, value: _this2.resolvePlayerSymbol(cell) });
+                  })
+                );
+              })
             )
           )
         )
@@ -23262,7 +23254,7 @@ var GameSelector = function (_React$Component) {
                   _react2.default.createElement(
                     _reactBootstrap.Col,
                     { sm: 6 },
-                    game.lastUpdated
+                    game.lastUpdated ? new Date(game.lastUpdated).toLocaleString('en-US') : ""
                   )
                 )
               )
@@ -23401,6 +23393,10 @@ var _header = __webpack_require__(540);
 
 var _header2 = _interopRequireDefault(_header);
 
+var _logout = __webpack_require__(542);
+
+var _logout2 = _interopRequireDefault(_logout);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -23437,6 +23433,7 @@ var App = function (_React$Component) {
     _this.handleGameRetrieval = _this.handleGameRetrieval.bind(_this);
     _this.alertWin = _this.alertWin.bind(_this);
     _this.updateGameInstance = _this.updateGameInstance.bind(_this);
+    _this.resetState = _this.resetState.bind(_this);
     return _this;
   }
 
@@ -23447,7 +23444,6 @@ var App = function (_React$Component) {
 
       var that = this;
       var socket = io();
-      var cachedUser = sessionStorage.getItem('user');
 
       socket.on('sync-game', function (game) {
         _this2.setState({
@@ -23476,10 +23472,15 @@ var App = function (_React$Component) {
       this.setState({
         connection: socket
       });
+    }
+  }, {
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      var cachedUser = sessionStorage.getItem('user');
 
-      if (cachedUser != null) {
+      if (cachedUser != null && !this.state.user) {
         var user = JSON.parse(cachedUser);
-        socket.emit('login', user.username);
+        this.state.connection.emit('login', user.username);
       }
     }
   }, {
@@ -23489,7 +23490,6 @@ var App = function (_React$Component) {
     key: 'handleConnect',
     value: function handleConnect(response) {
       sessionStorage.setItem('user', JSON.stringify(response.user));
-      console.log(response);
       this.setState({
         user: response.user,
         allGames: response.allGames
@@ -23498,8 +23498,6 @@ var App = function (_React$Component) {
   }, {
     key: 'handleGameRetrieval',
     value: function handleGameRetrieval(gameObj) {
-      console.log(gameObj);
-
       if (!gameObj.isActive) {
         var newGameList = this.state.allGames.slice();
         newGameList.push(gameObj);
@@ -23518,6 +23516,17 @@ var App = function (_React$Component) {
     value: function updateGameInstance(newGameInstance) {
       this.setState({
         gameInstance: newGameInstance
+      });
+    }
+  }, {
+    key: 'resetState',
+    value: function resetState() {
+      this.setState({
+        user: null,
+        gameId: null,
+        gameInstance: null,
+        allGames: [],
+        invitedGames: []
       });
     }
   }, {
@@ -23544,7 +23553,7 @@ var App = function (_React$Component) {
                   handleConnect: _this3.handleConnect
                 });
               } }),
-            _react2.default.createElement(_reactRouterDom.Route, { path: '/gameroom/:gameId',
+            _react2.default.createElement(_reactRouterDom.Route, { exact: true, path: '/gameroom/:gameId',
               render: function render(_ref2) {
                 var history = _ref2.history,
                     match = _ref2.match;
@@ -23558,7 +23567,9 @@ var App = function (_React$Component) {
                   history: history
                 });
               } }),
-            _react2.default.createElement(_reactRouterDom.Route, { path: '/gamelist',
+            _react2.default.createElement(_reactRouterDom.Route, {
+              path: '/gamelist',
+              exact: true,
               render: function render(_ref3) {
                 var history = _ref3.history,
                     match = _ref3.match;
@@ -23569,7 +23580,17 @@ var App = function (_React$Component) {
                   user: _this3.state.user, history: history,
                   match: match, allGames: _this3.state.allGames,
                   handleGameRetrieval: _this3.handleGameRetrieval });
-              } })
+              }
+            }),
+            _react2.default.createElement(_reactRouterDom.Route, {
+              exact: true,
+              path: '/logout',
+              render: function render(_ref4) {
+                var history = _ref4.history;
+
+                return _react2.default.createElement(_logout2.default, { history: history, resetState: _this3.resetState });
+              }
+            })
           )
         )
       );
@@ -38654,7 +38675,6 @@ var Landing = function (_React$Component) {
   }, {
     key: 'submitConnectUser',
     value: function submitConnectUser(username) {
-      console.log('submit username connection', username);
       this.props.connection.emit('login', username);
     }
   }, {
@@ -38712,21 +38732,17 @@ var Landing = function (_React$Component) {
             null,
             _react2.default.createElement(
               _reactBootstrap.Col,
-              { sm: 9 },
-              'Connect X is an multiplayer game project made to experiment with React with. Long term goals include adding an artificial intelligent opponent, modifying the idea of gravity, and introducing new kinds of play options to the classic game.'
-            )
-          ),
-          _react2.default.createElement(
-            _reactBootstrap.Row,
-            null,
-            _react2.default.createElement(
-              _reactBootstrap.Col,
-              { sm: 3, id: 'gameboard-column' },
-              this.renderGameColumn()
+              { sm: 7 },
+              'Connect X is an multiplayer game project made to experiment with React with. Long term goals include adding an artificial intelligent opponent, modifying the idea of gravity, and introducing new kinds of play options to the classic game.',
+              _react2.default.createElement(
+                'div',
+                null,
+                this.renderGameColumn()
+              )
             ),
             _react2.default.createElement(
               _reactBootstrap.Col,
-              { sm: 6, id: 'communication-column' },
+              { sm: 3, id: 'communication-column' },
               _react2.default.createElement(_usercontrolpanel2.default, {
                 user: this.props.user,
                 submitUserRegistration: this.submitUserRegistration,
@@ -50060,15 +50076,19 @@ var GameRoom = function (_React$Component) {
   }
 
   _createClass(GameRoom, [{
+    key: 'componentWillReceiveProps',
+    value: function componentWillReceiveProps(nextProps) {
+      // if parent socket.io connection is initialized in this page, then load the necessary components.
+      if (!this.props.user && nextProps.user) {
+        this.props.connection.emit('select-game', { _id: this.props.gameId });
+      }
+    }
+  }, {
     key: 'componentDidMount',
     value: function componentDidMount() {
-      var that = this;
-      setTimeout(function initialLoad() {
-        if (that.props.gameId != null) {
-          // continue a previous game
-          that.props.connection.emit('select-game', { _id: that.props.gameId });
-        }
-      }, 500);
+      if (this.props.user) {
+        this.props.connection.emit('select-game', { _id: this.props.gameId });
+      }
     }
   }, {
     key: 'renderGameRoomContent',
@@ -50135,12 +50155,13 @@ var GameRoom = function (_React$Component) {
 
 GameRoom.defaultProps = {
   gameId: null,
-  gameInstance: null
+  gameInstance: null,
+  user: null
 };
 
 GameRoom.propTypes = {
   connection: _propTypes2.default.object.isRequired,
-  user: _propTypes2.default.object.isRequired,
+  user: _propTypes2.default.object,
   gameId: _propTypes2.default.string,
   gameInstance: _propTypes2.default.object,
   updateGameInstance: _propTypes2.default.func.isRequired
@@ -53387,44 +53408,28 @@ var GameControlPanel = function (_React$Component) {
     key: 'renderPlayer1Row',
     value: function renderPlayer1Row() {
       return _react2.default.createElement(
-        _reactBootstrap.Row,
+        'div',
         null,
         _react2.default.createElement(
-          _reactBootstrap.Col,
-          { sm: 3 },
-          _react2.default.createElement(
-            'strong',
-            null,
-            'Player 1:'
-          )
+          'strong',
+          { className: 'player-label' },
+          'Player 1:'
         ),
-        _react2.default.createElement(
-          _reactBootstrap.Col,
-          { sm: 3 },
-          this.props.gameInstance && this.props.gameInstance.player1
-        )
+        this.props.gameInstance && this.props.gameInstance.player1
       );
     }
   }, {
     key: 'renderPlayer2Row',
     value: function renderPlayer2Row() {
       return _react2.default.createElement(
-        _reactBootstrap.Row,
+        'div',
         null,
         _react2.default.createElement(
-          _reactBootstrap.Col,
-          { sm: 3 },
-          _react2.default.createElement(
-            'strong',
-            null,
-            'Player 2:'
-          )
+          'strong',
+          { className: 'player-label' },
+          'Player 2:'
         ),
-        _react2.default.createElement(
-          _reactBootstrap.Col,
-          { sm: 3 },
-          this.props.gameInstance && this.props.gameInstance.player2
-        )
+        this.props.gameInstance && this.props.gameInstance.player2
       );
     }
   }, {
@@ -53446,119 +53451,95 @@ var GameControlPanel = function (_React$Component) {
         if (this.props.gameInstance.isActive && this.props.user) {
           if (!this.props.gameInstance.gameOver) {
             return _react2.default.createElement(
-              _reactBootstrap.Row,
+              'div',
               null,
               _react2.default.createElement(
-                _reactBootstrap.Col,
-                { sm: 3 },
-                _react2.default.createElement(
-                  'strong',
-                  null,
-                  'Current Player:'
-                )
+                'strong',
+                { className: 'current-player-label' },
+                'Current Player:'
               ),
-              _react2.default.createElement(
-                _reactBootstrap.Col,
-                { sm: 3 },
-                this.props.gameInstance.currentPlayer
-              )
+              this.props.gameInstance.currentPlayer
             );
           } else if (this.props.gameInstance.currentPlayer === this.props.user.username) {
             return _react2.default.createElement(
-              _reactBootstrap.Row,
+              'div',
               null,
               _react2.default.createElement(
-                _reactBootstrap.Col,
-                { sm: 4 },
-                _react2.default.createElement(
-                  'strong',
-                  null,
-                  'Congratulations, you\'ve won!!! Woot!'
-                )
+                'strong',
+                null,
+                'Congratulations, you\'ve won!!! Woot!'
               )
             );
           } else {
             return _react2.default.createElement(
-              _reactBootstrap.Row,
+              'div',
               null,
               _react2.default.createElement(
-                _reactBootstrap.Col,
-                { sm: 4 },
-                _react2.default.createElement(
-                  'strong',
-                  null,
-                  'Sorry, yo! Better luck next time.'
-                )
+                'strong',
+                null,
+                'Sorry, yo! Better luck next time.'
               )
             );
           }
         } else {
           return _react2.default.createElement(
-            _reactBootstrap.Row,
+            'div',
             null,
             _react2.default.createElement(
-              _reactBootstrap.Row,
+              'div',
               null,
               _react2.default.createElement(
-                _reactBootstrap.Col,
-                { sm: 2 },
-                _react2.default.createElement(
-                  'strong',
-                  null,
-                  'This game has not been started yet!'
-                )
+                'strong',
+                null,
+                'This game has not been started yet!'
               )
             ),
             _react2.default.createElement(
-              _reactBootstrap.Row,
+              'div',
               null,
               _react2.default.createElement(
-                _reactBootstrap.Col,
-                { sm: 12 },
+                'strong',
+                null,
+                'Please send this code to another player! (email not implemented yet)'
+              ),
+              _react2.default.createElement(
+                _reactBootstrap.Form,
+                { inline: true },
                 _react2.default.createElement(
-                  'strong',
-                  null,
-                  'Please send this code to another player! (email not implemented yet)'
+                  _reactBootstrap.FormGroup,
+                  { controlId: 'active-game-id' },
+                  _react2.default.createElement(
+                    _reactBootstrap.ControlLabel,
+                    null,
+                    'GameId:'
+                  ),
+                  _react2.default.createElement(_reactBootstrap.FormControl, { readOnly: true, type: 'text', value: this.props.gameInstance._id })
                 ),
+                ' ',
                 _react2.default.createElement(
-                  _reactBootstrap.Form,
-                  { inline: true },
+                  _reactBootstrap.FormGroup,
+                  { controlId: 'player-2-email' },
                   _react2.default.createElement(
-                    _reactBootstrap.FormGroup,
-                    { controlId: 'active-game-id' },
-                    _react2.default.createElement(
-                      _reactBootstrap.ControlLabel,
-                      null,
-                      'GameId:'
-                    ),
-                    _react2.default.createElement(_reactBootstrap.FormControl, { readOnly: true, type: 'text', value: this.props.gameInstance._id })
+                    _reactBootstrap.ControlLabel,
+                    null,
+                    'Player 2 Email:'
                   ),
-                  ' ',
-                  _react2.default.createElement(
-                    _reactBootstrap.FormGroup,
-                    { controlId: 'player-2-email' },
-                    _react2.default.createElement(
-                      _reactBootstrap.ControlLabel,
-                      null,
-                      'Player 2 Email:'
-                    ),
-                    _react2.default.createElement(_reactBootstrap.FormControl, {
-                      placeholder: 'player2@exampleEmail.com',
-                      type: 'text',
-                      onChange: function onChange(e) {
-                        e.preventDefault();_this2.syncEmail();
-                      }
-                    })
-                  ),
-                  ' ',
-                  _react2.default.createElement(
-                    _reactBootstrap.Button,
-                    { bsStyle: 'primary', disabled: this.disableInviteBtn(), onClick: function onClick(e) {
-                        e.preventDefault();
-                        _this2.props.handleGameInvite(_this2.state.inviteeEmail);
-                      } },
-                    'Invite'
-                  )
+                  _react2.default.createElement(_reactBootstrap.FormControl, {
+                    placeholder: 'player2@exampleEmail.com',
+                    type: 'text',
+                    onChange: function onChange(e) {
+                      e.preventDefault();_this2.syncEmail();
+                    }
+                  })
+                ),
+                ' ',
+                _react2.default.createElement(
+                  _reactBootstrap.Button,
+                  { bsStyle: 'primary', disabled: this.disableInviteBtn(), onClick: function onClick(e) {
+                      e.preventDefault();
+                      _this2.props.handleGameInvite(_this2.state.inviteeEmail);
+                    } },
+                  'Invite'
                 )
               )
             )
@@ -53570,7 +53551,7 @@ var GameControlPanel = function (_React$Component) {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
-        _reactBootstrap.Grid,
+        'div',
         null,
         this.renderPlayer1Row(),
         this.renderPlayer2Row(),
@@ -53823,6 +53804,11 @@ var Header = function (_React$Component) {
             _routenavitem2.default,
             { href: '/gamelist' },
             'Games'
+          ),
+          _react2.default.createElement(
+            _routenavitem2.default,
+            { href: '/logout' },
+            'Log Out'
           )
         );
       }
@@ -53912,6 +53898,72 @@ exports.default = function (props) {
     }
   });
 };
+
+/***/ }),
+/* 542 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _react = __webpack_require__(0);
+
+var _react2 = _interopRequireDefault(_react);
+
+var _propTypes = __webpack_require__(2);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var Logout = function (_React$Component) {
+  _inherits(Logout, _React$Component);
+
+  function Logout() {
+    _classCallCheck(this, Logout);
+
+    return _possibleConstructorReturn(this, (Logout.__proto__ || Object.getPrototypeOf(Logout)).apply(this, arguments));
+  }
+
+  _createClass(Logout, [{
+    key: 'componentDidMount',
+    value: function componentDidMount() {
+      sessionStorage.removeItem('user');
+      this.props.resetState();
+      this.props.history.push('/');
+    }
+  }, {
+    key: 'render',
+    value: function render() {
+      return _react2.default.createElement(
+        'div',
+        null,
+        'Logging out of app...'
+      );
+    }
+  }]);
+
+  return Logout;
+}(_react2.default.Component);
+
+Logout.propTypes = {
+  history: _propTypes2.default.object.isRequired,
+  resetState: _propTypes2.default.func.isRequired
+};
+
+exports.default = Logout;
 
 /***/ })
 /******/ ]);

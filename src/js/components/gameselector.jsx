@@ -40,7 +40,7 @@ class GameSelector extends React.Component {
                   <strong>Last Updated:</strong>
                 </Col>
                 <Col sm={6}>
-                  {game.lastUpdated}
+                  {game.lastUpdated ? (new Date(game.lastUpdated)).toLocaleString('en-US') : ""}
                 </Col>
               </Row>
             </Grid>
