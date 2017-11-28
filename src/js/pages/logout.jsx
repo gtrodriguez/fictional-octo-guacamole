@@ -9,7 +9,7 @@ class Logout extends React.Component {
   }
 
   render() {
-    return <div>Logging out of app...</div>
+    return <div>Logging out of app...</div>;
   }
 }
 

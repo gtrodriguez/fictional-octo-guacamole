@@ -159,7 +159,7 @@ io.on('connection', function(socket){
           subject: 'You\'ve been invited to a Connect X game!', // Subject line
           html: `<div>
             <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
-            <div><a href="http://localhost:3000/gameboard/${request.gameId}">Click here to join!</a></div>
+            <div><a href="https://calm-citadel-89840.herokuapp.com/${request.gameId}">Click here to join!</a></div>
           </div>`
         };
       } else {
@@ -169,7 +169,7 @@ io.on('connection', function(socket){
           subject: 'You\'ve been invited to a Connect X game!', // Subject line
           html: `<div>
             <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
-            <div><a href="http://localhost:3000?inviteGameId=${request.gameId}">Click here to join!</a></div>
+            <div><a href="https://calm-citadel-89840.herokuapp.com/${request.gameId}">Click here to join!</a></div>
           </div>`
         };
       }

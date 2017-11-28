@@ -111,7 +111,7 @@ class App extends React.Component {
       gameId: null,
       gameInstance: null,
       allGames: [],
-      invitedGames: []
+      invitedGames: [],
     });
   }
 
@@ -121,31 +121,27 @@ class App extends React.Component {
         <div className="app">
           <Header user={this.state.user}/>
           <Switch>
-            <Route exact path="/"
-              render = {({ history }) => (<Landing user={this.state.user}
-                                      connection={this.state.connection}
-                                      history={history}
-                                      handleConnect={this.handleConnect}
-                                      />)} />
-            <Route exact path="/gameroom/:gameId"
+            <Route path="/gameroom/:gameId"
               render = {({ history, match }) => {
-                                    console.log(match,'match');
-                                    return (<GameRoom user={this.state.user}
-                                         connection={this.state.connection}
-                                         gameId={match.params.gameId}
-                                         gameInstance={this.state.gameInstance}
-                                         updateGameInstance={this.updateGameInstance}
-                                         history={history}
-                                    />);}}/>
-            <Route
-              path="/gamelist"
-              exact
-              render={({ history, match }) => {
                 console.log(match,'match');
+                return (<GameRoom
+                      user={this.state.user}
+                      connection={this.state.connection}
+                      gameId={match.params.gameId}
+                      gameInstance={this.state.gameInstance}
+                      updateGameInstance={this.updateGameInstance}
+                      history={history}
+                />);}} />
+            <Route
+              path="/gamelist/:inviteGameId?"
+              render={({ history, match }) => {
                 return (<GameList
                 connection={this.state.connection}
-                user={this.state.user} history={history}
-                match={match} allGames={this.state.allGames} 
+                user={this.state.user}
+                history={history}
+                match={match}
+                allGames={this.state.allGames}
+                inviteGameId={match.params.inviteGameId}
                 handleGameRetrieval={this.handleGameRetrieval} />
                 );}}
               />
@@ -156,6 +152,14 @@ class App extends React.Component {
                 return <Logout history={history} resetState={this.resetState} />;
               }}
               />
+            <Route exact path="/:inviteGameId?"
+              render = {({ history, match }) => (<Landing
+              user={this.state.user}
+              connection={this.state.connection}
+              history={history}
+              inviteGameId={match.params.inviteGameId}
+              handleConnect={this.handleConnect}
+              />)} />
           </Switch>
         </div>
       </BrowserRouter>

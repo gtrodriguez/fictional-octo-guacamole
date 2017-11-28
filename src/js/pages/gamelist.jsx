@@ -10,6 +10,7 @@ class GameList extends React.Component {
     this.handleRegisterGame = this.handleRegisterGame.bind(this);
     this.renderGameColumn = this.renderGameColumn.bind(this);
     this.createNewGame = this.createNewGame.bind(this);
+    this.renderGameColumn = this.renderGameColumn.bind(this);
   }
 
   componentDidMount() {
@@ -38,16 +39,11 @@ class GameList extends React.Component {
     this.props.connection.emit('new-game', this.props.user.username);
   }
 
-  handleGameInviteUpdate(newInviteGameId) {
-    // do something
-  }
-
   renderGameColumn() {
     return (<GameSelector
       games={this.props.allGames}
       inviteGameId={this.props.match.params.inviteGameId}
       handleRegisterGame={this.handleRegisterGame}
-      handleGameInviteUpdate={this.handleGameInviteUpdate}
       createNewGame={this.createNewGame}
     />);
   }
@@ -90,6 +86,7 @@ GameList.defaultProps = {
   user: null,
   connection: null,
   allGames: [],
+  inviteGameId: '',
 };
 
 GameList.propTypes = {
@@ -99,6 +96,7 @@ GameList.propTypes = {
   match: PropTypes.object.isRequired,
   allGames: PropTypes.arrayOf(PropTypes.object),
   handleGameRetrieval: PropTypes.func.isRequired,
+  inviteGameId: PropTypes.string,
 };
 
 export default GameList;

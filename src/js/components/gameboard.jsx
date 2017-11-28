@@ -1,7 +1,7 @@
 import React from 'react';
 import io from 'socket.io-client';
 import PropTypes from 'prop-types';
-import { Grid, Row, Col } from 'react-bootstrap';
+import { Grid, Row, Col, Alert } from 'react-bootstrap';
 import InteractiveTile from './interactivetile';
 import GameBoardTile from './gameboardtile';
 import GameControlPanel from './gamecontrolpanel';
@@ -21,6 +21,8 @@ class GameBoard extends React.Component {
       longestRun: 0,
     };
 
+    this.state = {emailSent: false};
+
     this.updateScore = this.updateScore.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.checkGameBoard = this.checkGameBoard.bind(this);
@@ -31,6 +33,7 @@ class GameBoard extends React.Component {
     this.tileEnabled = this.tileEnabled.bind(this);
     this.checkForWinner = this.checkForWinner.bind(this);
     this.handleGameInvite = this.handleGameInvite.bind(this);
+    this.renderEmailSentAlert = this.renderEmailSentAlert.bind(this);
   }
 
   componentWillMount() {
@@ -242,11 +245,26 @@ class GameBoard extends React.Component {
   }
 
   handleGameInvite(inviteeEmail) {
+    const that = this;
     this.props.connection.emit('invite-player', {
       gameId: this.props.gameInstance._id,
       senderUserName: this.props.user.username,
       email: inviteeEmail,
     });
+
+    this.setState({emailSent: true});
+
+    setTimeout(()=>{
+      that.setState({emailSent: false});
+    },4000);
+  }
+
+  renderEmailSentAlert() {
+    if (this.state.emailSent) {
+      return (<Alert bsStyle="success">
+        <strong>Game Invite Sent!</strong> Tell your pal to check their email!
+      </Alert>);
+    }
   }
 
   render () {
@@ -258,6 +276,9 @@ class GameBoard extends React.Component {
             handleGameInvite={this.handleGameInvite}
             user={this.props.user}
           />
+          {
+            this.renderEmailSentAlert()
+          }
         </div>
         <div>
           <div id="interactive-row">

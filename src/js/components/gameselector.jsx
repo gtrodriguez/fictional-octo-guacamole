@@ -8,7 +8,11 @@ class GameSelector extends React.Component {
     super(props);
     this.selectorContent = this.selectorContent.bind(this);
     this.syncGameInvite = this.syncGameInvite.bind(this);
-    this.state = {inviteGameId: null};
+    this.state = {inviteGameId: ''};
+  }
+
+  componentDidMount() {
+    this.setState({inviteGameId: this.props.inviteGameId});
   }
 
   selectorContent(){
@@ -50,9 +54,8 @@ class GameSelector extends React.Component {
       </ListGroup>);
   }
 
-  syncGameInvite() {
-    var gameIdEl = document.getElementById('invite-game-id');
-    this.setState({inviteGameId: gameIdEl.value});
+  syncGameInvite(e) {
+    this.setState({inviteGameId: e.target.value});
   }
 
   joinDisabled() {
@@ -72,13 +75,14 @@ class GameSelector extends React.Component {
         </div>
         <div>
           <Form inline>
-            <FormGroup controlId="invite-game-id">
+            <FormGroup
+              controlId="invite-game-id"
+              >
               <FormControl
                 type="text"
                 placeholder="Game Invite Code"
-                onChange={(e) => { e.preventDefault();
-                  this.syncGameInvite();
-                }} />
+                value={this.state.inviteGameId}
+                onChange={this.syncGameInvite} />
             </FormGroup>
             <Button
               type="button"
@@ -101,13 +105,12 @@ class GameSelector extends React.Component {
 
 GameSelector.defaultProps = {
   games: [],
-  inviteGameId: null
+  inviteGameId: '',
 };
 
 GameSelector.propTypes = {
   games: PropTypes.arrayOf(PropTypes.object),
   inviteGameId: PropTypes.string,
-  handleGameInviteUpdate: PropTypes.func.isRequired,
   handleRegisterGame: PropTypes.func.isRequired,
   createNewGame: PropTypes.func.isRequired,
 };

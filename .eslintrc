@@ -12,7 +12,7 @@
     "no-alert": 0,
     "no-console": 0,
     "react/forbid-prop-types": "off",
-    "no-underscore-dangle": "allow"
+    "no-underscore-dangle": 0
 	},
   "plugins": [
     "only-warn"

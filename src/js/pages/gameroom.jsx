@@ -19,7 +19,7 @@ class GameRoom extends React.Component {
 
   renderGameRoomContent() {
     if (this.props.gameId != null) {
-      if (this.props.gameInstance != null) {
+      if (this.props.gameInstance != null && this.props.user != null) {
         return (<GameBoard
           gameInstance={this.props.gameInstance}
           updateGameInstance={this.props.updateGameInstance}

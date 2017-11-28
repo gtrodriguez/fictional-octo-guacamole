@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Row, Col, Button, ControlLabel, Label } from 'react-bootstrap';
+import { Grid, Row, Col, Button, FormGroup, FormControl, ControlLabel, Label } from 'react-bootstrap';
 
 class UserControlPanel extends React.Component {
   constructor(props) {
@@ -48,54 +48,55 @@ class UserControlPanel extends React.Component {
   renderContent() {
     if (this.props.user) {
       return (<Grid id="user-details">
-            <Row>
-              <ControlLabel className="login-label" htmlFor="username">UserName:</ControlLabel>
-              {this.props.user.username}
-            </Row>
-            <Row>
-              <ControlLabel className="login-label" htmlFor="email">Email:</ControlLabel>
-              {this.props.user.email}
-            </Row>
-          </Grid>
-        );
+        <Row>
+          <ControlLabel className="login-label" htmlFor="username">UserName:</ControlLabel>
+          {this.props.user.username}
+        </Row>
+        <Row>
+          <ControlLabel className="login-label" htmlFor="email">Email:</ControlLabel>
+          {this.props.user.email}
+        </Row>
+      </Grid>);
     }
 
     return (
-          <Grid id="user-details">
-            <Row>
-              <Row>
-                <ControlLabel className="login-label" htmlFor="username">UserName: <input type="text" id="username" name="username" /></ControlLabel>
-              </Row>
-              <Row>
-                <ControlLabel className="login-label" htmlFor="email">Email: <input type="text" id="email" name="email" /></ControlLabel>
-              </Row>
-              <Row>
-                <Button
-                  bsStyle="success"
-                  type="button"
-                  onClick={(e) => { e.preventDefault(); this.registerUser(); }}
-                >
-                  Register
-                </Button>
-              </Row>
-            </Row>
-            <hr/>
-            <Row>
-              <Row>
-                <ControlLabel className="login-label" htmlFor="active-username">Username: <input type="text" id="active-username" name="active-username" /></ControlLabel>
-              </Row>
-              <Row>
-                <Button
-                  bsStyle="primary"
-                  type="button"
-                  onClick={(e) => { e.preventDefault(); this.connectUser(); }}
-                >
-                  Sign In
-                </Button>
-              </Row>
-            </Row>
-          </Grid>
-      );
+      <Grid id="user-details">
+        <Row>
+          <div className="login-form-element">
+            <FormGroup controlId="username">
+              <ControlLabel>Username:</ControlLabel>
+              <FormControl type="text" />
+            </FormGroup>
+            <FormGroup controlId="email">
+              <ControlLabel>Email:</ControlLabel>
+              <FormControl type="email" />
+            </FormGroup>
+          </div>
+          <Button
+            bsStyle="success"
+            type="button"
+            onClick={(e) => { e.preventDefault(); this.registerUser(); }}
+          >
+            Register
+          </Button>
+        </Row>
+        <hr/>
+        <Row>
+          <div className="login-form-element">
+          <FormGroup controlId="active-username">
+            <ControlLabel>Username:</ControlLabel>
+            <FormControl type="text" />
+          </FormGroup>
+          <Button
+            bsStyle="primary"
+            type="button"
+            onClick={(e) => { e.preventDefault(); this.connectUser(); }}
+          >
+            Sign In
+          </Button>
+          </div>
+        </Row>
+      </Grid>);
   }
 
   render() {

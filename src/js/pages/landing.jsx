@@ -10,11 +10,12 @@ class Landing extends React.Component {
 
     this.submitConnectUser = this.submitConnectUser.bind(this);
     this.submitUserRegistration = this.submitUserRegistration.bind(this);
+    this.renderWelcomeMessage = this.renderWelcomeMessage.bind(this);
+    this.renderGameColumn = this.renderGameColumn.bind(this);
   }
 
   componentDidMount() {
     this.props.connection.on('register-success', (response) => {
-      this.props.handleConnect(response);
       this.props.history.push('/gamelist');
     });
 
@@ -32,14 +33,40 @@ class Landing extends React.Component {
   }
 
   renderGameColumn() {
-    if (this.props.user == null) {
-      return <div className="landing-content">You must first sign in or register.</div>;
+    if (this.props.user === null) {
+      return null;
     }
+
     return (<div className="landing-content">
       <Button type="button">
         <Link to="/gamelist"><strong>Your Games</strong></Link>
       </Button>
     </div>);
+  }
+
+  renderInviteGameSection() {
+    if ( this.props.user === null || this.props.inviteGameId === '') {
+      return null;
+    }
+
+    return (<div className="landing-content">
+      <Button type="button">
+        <Link to={`/gamelist/${this.props.inviteGameId}`}><strong>Accept Game Invite</strong></Link>
+      </Button>
+      <hr />
+    </div>);
+  }
+
+  renderWelcomeMessage() {
+    if (this.props.user === null && !this.props.inviteGameId) {
+      return <div className="landing-content">You must first sign in or register.</div>;
+    } else if (this.props.user === null && this.props.inviteGameId) {
+      return (<div className="landing-content">You've been invited to a game but
+      first sign in or register.</div>);
+    } else if(this.props.inviteGameId) {
+      return (<div className="landing-content">You've been invited to a game!</div>);
+    }
+    return null;
   }
 
   render() {
@@ -52,17 +79,30 @@ class Landing extends React.Component {
         </Row>
         <Row>
           <Col sm={7}>
+            <p>
             Connect X is an multiplayer game project made to experiment with React with.
             Long term goals include adding an artificial intelligent opponent,
             modifying the idea of gravity, and introducing new kinds of play options to
             the classic game.
+            </p>
+            <div>
+              {
+                this.renderWelcomeMessage()
+              }
+              <hr />
+            </div>
+            <div>
+              {
+                this.renderInviteGameSection()
+              }
+            </div>
             <div>
               {
                 this.renderGameColumn()
               }
             </div>
           </Col>
-          <Col sm={3} id="communication-column">
+          <Col sm={2} id="communication-column">
             <UserControlPanel
               user={this.props.user}
               submitUserRegistration={this.submitUserRegistration}
@@ -78,6 +118,7 @@ class Landing extends React.Component {
 
 Landing.defaultProps = {
   user: null,
+  inviteGameId: '',
 };
 
 Landing.propTypes = {
@@ -85,6 +126,7 @@ Landing.propTypes = {
   history: PropTypes.object.isRequired,
   connection: PropTypes.object.isRequired,
   handleConnect: PropTypes.func.isRequired,
+  inviteGameId: PropTypes.string,
 };
 
 export default Landing;
