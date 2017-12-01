@@ -23,6 +23,9 @@
   "homepage": "https://github.com/gtrodriguez/fictional-octo-guacamole#readme",
   "devDependencies": {
     "css-loader": "^0.28.7",
+    "enzyme": "^3.2.0",
+    "enzyme-adapter-react-15": "^1.0.5",
+    "enzyme-to-json": "^3.2.2",
     "eslint": "^4.3.0",
     "eslint-config-airbnb": "^15.1.0",
     "eslint-loader": "^1.9.0",
@@ -59,5 +62,10 @@
   },
   "engines": {
     "node": "8.5.0"
+  },
+  "jest": {
+    "snapshotSerializers": [
+      "enzyme-to-json/serializer"
+    ]
   }
 }

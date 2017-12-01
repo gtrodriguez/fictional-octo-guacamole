@@ -37875,7 +37875,7 @@ var Landing = function (_React$Component) {
               _react2.default.createElement(
                 'p',
                 null,
-                'Connect X is an multiplayer game project made to experiment with React with. Long term goals include adding an artificial intelligent opponent, modifying the idea of gravity, and introducing new kinds of play options to the classic game.'
+                'Connect X is a multiplayer game project used to experiment with React. Long term goals include adding an artificial intelligent opponent, modifying the idea of gravity, and introducing new kinds of play options to the classic game.'
               ),
               _react2.default.createElement(
                 'div',
