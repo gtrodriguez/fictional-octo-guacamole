@@ -17,39 +17,30 @@ app.get('*', function (req, res) {
 
 http.listen(process.env.PORT || 3000);
 
-var gameInstance = null;
-var timeStamp = null;
-var currentPlayer = null;
-var GameSession = {
-  gameInstance: null,
-  id: 0,
-  currentPlayer: 1, //starts with null
-  player1: 'ip address',
-  player2: 'ip address',
-};
-
-var transporter = nodemailer.createTransport({
- service: 'gmail',
+let gameInstance = null;
+let timeStamp = null;
+let currentPlayer = null;
+const transporter = nodemailer.createTransport({
+ service: process.env.GAMEMASTER_EMAIL_SERVICE,
  auth: {
-        user: 'gamemaster.connectxgame@gmail.com',
-        pass: '0ul8UlLIDOdl'
+        user: process.env.GAMEMASTER_EMAIL_ADDRESS,
+        pass: process.env.GAMEMASTER_EMAIL_PASSWORD
     }
 });
 
-mongoose.connect('mongodb://sampleAdminUsername:QfJX4MKU1tk4@ds121686.mlab.com:21686/heroku_8fvch1mq', { useMongoClient: true });
+mongoose.connect(process.env.MONGODB_CONNECTION_STR, { useMongoClient: true });
 
-var db = mongoose.connection; 
-var dbCollection = db.collections;
-var userSchema = mongoose.Schema({
+const db = mongoose.connection,
+dbCollection = db.collections,
+userSchema = mongoose.Schema({
   username: {
       type: String
     },
     email: {
       type: String
     }
-}, { runSettersOnQuery: true });
-
-var gameSchema = mongoose.Schema({
+}, { runSettersOnQuery: true }),
+gameSchema = mongoose.Schema({
   id: Number,
   player1: String,
   player2: String,
@@ -59,21 +50,14 @@ var gameSchema = mongoose.Schema({
   isActive: Boolean,
   lastUpdated: Date,
   gameOver: Boolean
-});
-
-let User = mongoose.model('User', userSchema);
-let Game = mongoose.model('Game', gameSchema);
+}),
+User = mongoose.model('User', userSchema),
+Game = mongoose.model('Game', gameSchema);
 
 io.on('connection', function(socket){
-  console.log('made socket connection');
-
   socket.on('register', function(msg){
-    console.log(msg);
-
     User.findOne({ username: msg.username }, function (err, user) {
         if (err) return console.log(err);
-
-        console.log(user,"xxx");
 
         if (user == null) {//only allow registering with this method
           console.log("did not find user");
@@ -93,8 +77,9 @@ io.on('connection', function(socket){
         } else {
           console.log("found user", user);
           //if already exist then return this user
-          Game.find({$and: [{$or: [{'player1': username}, {'player2': username}]}, {'gameOver': false}]}, function (err, games) {
-            socket.emit('login-success', {user: user, allGames: games});
+          Game.find({$and: [{$or: [{'player1': username}, {'player2': username}]}, {'gameOver': false}]},
+            function (err, games) {
+              socket.emit('login-success', {user: user, allGames: games});
           });
         }
     });
@@ -105,10 +90,8 @@ io.on('connection', function(socket){
 
     User.findOne({ username: username }, function (err, user) {
         if (err) return console.log(err);
-        console.log(user);
 
         if (user) {
-          console.log("found user", user);
           //if already exist then return this user
           Game.find(
             {$and: [{$or: [{'player1': username}, {'player2': username}]}, {'gameOver': false}]}, function (err, games) {
@@ -124,7 +107,6 @@ io.on('connection', function(socket){
   });
 
   socket.on('select-game', function (msg) {
-    console.log(JSON.stringify(msg));
     Game.findOne({
       _id: msg._id
     }, function (err, gameInstance) {
@@ -138,10 +120,10 @@ io.on('connection', function(socket){
 // need to make a game room be in the url of the app
 // once they click into a game, they get routed into a react game
 
-
   // send an email to another player with a link to the game room
   socket.on('invite-player', function(request){
     // tbd
+    // 
     // send an email with a link to the game instance
     User.findOne({email: request.email}, function (err, user) {
       let mailOptions = {};
@@ -154,22 +136,22 @@ io.on('connection', function(socket){
         socket.to(user._id).emit('invite-to-game', request.gameId);
         //create a link with an option.
         mailOptions = {
-          from: 'gamemaster.connectxgame@gmail.com', // sender address
+          from: process.env.GAMEMASTER_EMAIL_ADDRESS, // sender address
           to: request.email, // list of receivers
           subject: 'You\'ve been invited to a Connect X game!', // Subject line
           html: `<div>
             <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
-            <div><a href="https://calm-citadel-89840.herokuapp.com/${request.gameId}">Click here to join!</a></div>
+            <div><a href="${process.env.APP_BASE_URL}/${request.gameId}">Click here to join!</a></div>
           </div>`
         };
       } else {
         mailOptions = {
-          from: 'gamemaster.connectxgame@gmail.com', // sender address
+          from: process.env.GAMEMASTER_EMAIL_ADDRESS, // sender address
           to: request.email, // list of receivers
           subject: 'You\'ve been invited to a Connect X game!', // Subject line
           html: `<div>
             <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
-            <div><a href="https://calm-citadel-89840.herokuapp.com/${request.gameId}">Click here to join!</a></div>
+            <div><a href="${process.env.APP_BASE_URL}/${request.gameId}">Click here to join!</a></div>
           </div>`
         };
       }
@@ -197,7 +179,6 @@ io.on('connection', function(socket){
         game.isActive = true;
         game.currentPlayer = Math.round(Math.random()) == 0 ? game.player1 : game.player2;
         game.lastUpdated = new Date();
-
         game.save();
 
         socket.join(game._id);
@@ -225,13 +206,11 @@ io.on('connection', function(socket){
       isActive: false,
       _id: new ObjectID(),
       gameOver: false
-    };
-
-    const newGame = new Game(gameInstance);
+    },
+    newGame = new Game(gameInstance);
 
     newGame.save(function (err) {
         if(err) console.log(err);
-        console.log("attempt to save");
     });
 
     socket.join(gameInstance._id);
@@ -243,7 +222,7 @@ io.on('connection', function(socket){
       _id: msg._id,
     }, function (err, gameInstance){
         if (err) console.log(err);
-        console.log(JSON.stringify(msg),"XXX",JSON.stringify(gameInstance)); 
+
         gameInstance.scoreBoard = msg.scoreBoard;
         gameInstance.currentPlayer = msg.currentPlayer;
         gameInstance.lastUpdated = new Date();
