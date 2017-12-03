@@ -54165,7 +54165,7 @@ var GameLink = function (_React$Component) {
           )
         );
       } else if (this.props.game.inviteeEmail) {
-        _react2.default.createElement(
+        return _react2.default.createElement(
           _reactBootstrap.Row,
           null,
           _react2.default.createElement(
@@ -54175,7 +54175,7 @@ var GameLink = function (_React$Component) {
               'strong',
               null,
               'Email sent to ',
-              this.props.game.player2,
+              this.props.game.inviteeEmail,
               ', but has not yet accepted the invite!'
             )
           )

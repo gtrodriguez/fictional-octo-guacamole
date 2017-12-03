@@ -53,11 +53,11 @@ class GameLink extends React.Component {
         </Col>
       </Row>);
     } else if (this.props.game.inviteeEmail) { 
-      <Row>
+      return (<Row>
         <Col sm={8}>
-          <strong>Email sent to {this.props.game.player2}, but has not yet accepted the invite!</strong>
+          <strong>Email sent to {this.props.game.inviteeEmail}, but has not yet accepted the invite!</strong>
         </Col>
-      </Row>
+      </Row>);
     } else {
       return (<Row>
         <Col sm={8}>
