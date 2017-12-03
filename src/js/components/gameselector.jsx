@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, FormControl, FormGroup, Grid, Row, Col, Button, Label, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import GameLink from './gamelink';
 
 class GameSelector extends React.Component {
   constructor(props) {
@@ -9,6 +10,7 @@ class GameSelector extends React.Component {
     this.selectorContent = this.selectorContent.bind(this);
     this.syncGameInvite = this.syncGameInvite.bind(this);
     this.state = {inviteGameId: ''};
+    this.renderGameInvites = this.renderGameInvites.bind(this);
   }
 
   componentDidMount() {
@@ -16,40 +18,12 @@ class GameSelector extends React.Component {
   }
 
   selectorContent(){
-    if(this.props.games.length == 0){
+    if(this.props.games.filter(game => game.isActive === true).length === 0){
       return <div>You have no active games! Please create a new one!</div>;
     }
 
-    return (<ListGroup>{this.props.games.map((game, index) => {
-        return (<ListGroupItem data-game-instance-id={game._id}
-          key={game._id}>
-          <Link to={`/gameroom/${game._id}`}>
-            <Grid>
-              <Row>
-                <Col sm={2}>
-                  <strong>Player 1:</strong>
-                </Col>
-                <Col sm={2}>
-                  {game.player1}
-                </Col>
-                <Col sm={2}>
-                  <strong>Player 2:</strong>
-                </Col>
-                <Col sm={2}>
-                  {game.player2}
-                </Col>
-              </Row>
-              <Row>
-                <Col sm={2}>
-                  <strong>Last Updated:</strong>
-                </Col>
-                <Col sm={6}>
-                  {game.lastUpdated ? (new Date(game.lastUpdated)).toLocaleString('en-US') : ""}
-                </Col>
-              </Row>
-            </Grid>
-          </Link>
-        </ListGroupItem>);
+    return (<ListGroup>{this.props.games.filter(game => game.isActive === true).map((game, index) => {
+        return <GameLink key={game._id} game={game} user={this.props.user} />;
       })}
       </ListGroup>);
   }
@@ -60,6 +34,23 @@ class GameSelector extends React.Component {
 
   joinDisabled() {
     return !this.state.inviteGameId;
+  }
+
+  renderGameInvites() {
+    if (this.props.games.filter(game => game.isActive === false).length) {
+      return (
+        <div>
+          <h3>Pending Games</h3>
+        <ListGroup>{this.props.games.filter(game => game.isActive === false).map((game, index) => {
+        return (<GameLink
+          key={game._id}
+          game={game}
+          user={this.props.user}
+          handleRegisterGame={this.props.handleRegisterGame}/>);
+      })}
+      </ListGroup>
+      </div>);
+    }
   }
 
   render() {
@@ -97,8 +88,12 @@ class GameSelector extends React.Component {
         </div>
         <hr />
         <div className="continue-game-section">
+          <h3>Active Games</h3>
           { this.selectorContent() }
         </div>
+        {
+          this.renderGameInvites()
+        }
       </div>);
   }
 }
@@ -113,6 +108,7 @@ GameSelector.propTypes = {
   inviteGameId: PropTypes.string,
   handleRegisterGame: PropTypes.func.isRequired,
   createNewGame: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
 };
 
 export default GameSelector;

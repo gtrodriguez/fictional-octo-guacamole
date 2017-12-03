@@ -41,8 +41,8 @@ class GameControlPanel extends React.Component {
       if (this.props.gameInstance.isActive && this.props.user) {
         if (!this.props.gameInstance.gameOver) {
           return (<div>
-              <strong className="current-player-label">Current Player:</strong>
-              {this.props.gameInstance.currentPlayer}
+            <strong className="current-player-label">Current Player:</strong>
+            {this.props.gameInstance.currentPlayer}
           </div>);
         } else if (this.props.gameInstance.currentPlayer === this.props.user.username){
           return (<div>
@@ -50,7 +50,7 @@ class GameControlPanel extends React.Component {
           </div>);
         } else {
           return (<div>
-              <strong>Sorry, yo! Better luck next time.</strong>
+            <strong>Sorry, yo! Better luck next time.</strong>
           </div>);
         }
       } else {
@@ -59,7 +59,7 @@ class GameControlPanel extends React.Component {
             <strong>This game has not been started yet!</strong>
           </div>
           <div>
-            <strong>Please send this code to another player! (email not implemented yet)</strong>
+            <strong>Please send this code to another player!</strong>
             <Form inline>
               <FormGroup controlId="active-game-id">
                 <ControlLabel>GameId:</ControlLabel>

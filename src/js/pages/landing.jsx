@@ -44,19 +44,6 @@ class Landing extends React.Component {
     </div>);
   }
 
-  renderInviteGameSection() {
-    if ( this.props.user === null || this.props.inviteGameId === '') {
-      return null;
-    }
-
-    return (<div className="landing-content">
-      <Button type="button">
-        <Link to={`/gamelist/${this.props.inviteGameId}`}><strong>Accept Game Invite</strong></Link>
-      </Button>
-      <hr />
-    </div>);
-  }
-
   renderWelcomeMessage() {
     if (this.props.user === null && !this.props.inviteGameId) {
       return <div className="landing-content">You must first sign in or register.</div>;
@@ -80,7 +67,7 @@ class Landing extends React.Component {
         <Row>
           <Col sm={7}>
             <p>
-            Connect X is a multiplayer game project used to experiment with React.
+            Connect X is a online multiplayer game project used to experiment with React.
             Long term goals include adding an artificial intelligent opponent,
             modifying the idea of gravity, and introducing new kinds of play options to
             the classic game.
@@ -90,11 +77,6 @@ class Landing extends React.Component {
                 this.renderWelcomeMessage()
               }
               <hr />
-            </div>
-            <div>
-              {
-                this.renderInviteGameSection()
-              }
             </div>
             <div>
               {

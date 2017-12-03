@@ -45,6 +45,7 @@ class GameList extends React.Component {
       inviteGameId={this.props.match.params.inviteGameId}
       handleRegisterGame={this.handleRegisterGame}
       createNewGame={this.createNewGame}
+      user={this.props.user}
     />);
   }
 

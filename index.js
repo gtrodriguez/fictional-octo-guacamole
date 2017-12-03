@@ -49,7 +49,8 @@ gameSchema = mongoose.Schema({
   completed: Boolean,
   isActive: Boolean,
   lastUpdated: Date,
-  gameOver: Boolean
+  gameOver: Boolean,
+  inviteeEmail: String
 }),
 User = mongoose.model('User', userSchema),
 Game = mongoose.model('Game', gameSchema);
@@ -73,11 +74,18 @@ io.on('connection', function(socket){
               console.log("attempt to save");
           });
 
-          socket.emit('login-success', {user: userObj, allGames: []});
+          Game.update({'inviteeEmail': msg.email},{'player2': userObj.username},function(err,raw){
+            Game.find({'player2': userObj.username}, null, {sort: '-lastUpdated'}, function (err, games) {
+            if (err) return console.log(err);
+              // set up personal socket.
+              socket.emit('login-success', {user: userObj, allGames: games});
+            });
+          });
         } else {
           console.log("found user", user);
           //if already exist then return this user
-          Game.find({$and: [{$or: [{'player1': username}, {'player2': username}]}, {'gameOver': false}]},
+          Game.find({$and: [{$or: [{'player1': username}, {'player2': username}, {'inviteeEmail': user.email}]}, {'gameOver': false}]},
+            null, {sort: '-lastUpdated'},
             function (err, games) {
               socket.emit('login-success', {user: user, allGames: games});
           });
@@ -94,7 +102,7 @@ io.on('connection', function(socket){
         if (user) {
           //if already exist then return this user
           Game.find(
-            {$and: [{$or: [{'player1': username}, {'player2': username}]}, {'gameOver': false}]}, function (err, games) {
+            {$and: [{$or: [{'player1': username}, {'player2': username}, {'inviteeEmail': user.email}]}, {'gameOver': false}]}, null, {sort: '-lastUpdated'}, function (err, games) {
             // set up personal socket.
             socket.join(user._id);
             socket.emit('login-success', {user: user, allGames: games});
@@ -116,52 +124,60 @@ io.on('connection', function(socket){
     });
   });
 
-// starts off with game room is null
-// need to make a game room be in the url of the app
-// once they click into a game, they get routed into a react game
-
   // send an email to another player with a link to the game room
   socket.on('invite-player', function(request){
     // tbd
     // 
     // send an email with a link to the game instance
-    User.findOne({email: request.email}, function (err, user) {
-      let mailOptions = {};
-
+    Game.findOne({_id: request.gameId}, function (err, game){
       if (err)
-        return socket.emit('invite-failed', {reason: "some sort of error!"});
+        return socket.emit('register-failed', {reason: "game not found"});
 
-      if (user) {
-        // attempt to send the message in app.
-        socket.to(user._id).emit('invite-to-game', request.gameId);
-        //create a link with an option.
-        mailOptions = {
-          from: process.env.GAMEMASTER_EMAIL_ADDRESS, // sender address
-          to: request.email, // list of receivers
-          subject: 'You\'ve been invited to a Connect X game!', // Subject line
-          html: `<div>
-            <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
-            <div><a href="${process.env.APP_BASE_URL}/${request.gameId}">Click here to join!</a></div>
-          </div>`
-        };
-      } else {
-        mailOptions = {
-          from: process.env.GAMEMASTER_EMAIL_ADDRESS, // sender address
-          to: request.email, // list of receivers
-          subject: 'You\'ve been invited to a Connect X game!', // Subject line
-          html: `<div>
-            <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
-            <div><a href="${process.env.APP_BASE_URL}/${request.gameId}">Click here to join!</a></div>
-          </div>`
-        };
-      }
+      User.findOne({email: request.email}, function (err, user) {
+        let mailOptions = {};
 
-      transporter.sendMail(mailOptions, function (err, info) {
-         if(err)
-           console.log(err)
-         else
-           console.log(info);
+        if (err)
+          return socket.emit('invite-failed', {reason: "some sort of error!"});
+
+        if (user) {
+          // attempt to send the message in app.
+          socket.to(user._id).emit('invite-to-game', request.gameId);
+          game.player2 = user.username;
+          //create a link with an option.
+          mailOptions = {
+            from: process.env.GAMEMASTER_EMAIL_ADDRESS, // sender address
+            to: request.email, // list of receivers
+            subject: 'You\'ve been invited to a Connect X game!', // Subject line
+            html: `<div>
+              <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
+              <div><a href="${process.env.APP_BASE_URL}/${request.gameId}">Click here to join!</a></div>
+            </div>`
+          };
+        } else {
+          mailOptions = {
+            from: process.env.GAMEMASTER_EMAIL_ADDRESS, // sender address
+            to: request.email, // list of receivers
+            subject: 'You\'ve been invited to a Connect X game!', // Subject line
+            html: `<div>
+              <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
+              <div><a href="${process.env.APP_BASE_URL}/${request.gameId}">Click here to join!</a></div>
+            </div>`
+          };
+        }
+
+        transporter.sendMail(mailOptions, function (err, info) {
+           if(err)
+             console.log(err)
+           else
+             console.log(info);
+        });
       });
+
+      game.inviteeEmail = request.email;
+      game.lastUpdated = new Date();
+      game.save();
+
+      io.to(game._id).emit('sync-game', game);
     });
   });
 
@@ -230,7 +246,6 @@ io.on('connection', function(socket){
         gameInstance.save();
 
         // broadcast the game update to all the players subscribed to a game room
-        // figure out how to broadcast to only the other player
         io.to(msg._id).emit('sync-game', gameInstance); 
     });
   });
