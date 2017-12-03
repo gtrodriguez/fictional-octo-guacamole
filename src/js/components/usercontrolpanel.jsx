@@ -34,8 +34,6 @@ class UserControlPanel extends React.Component {
   }
 
   connectUser() {
-    console.log("conenct user");
-    
     const usernameEl = document.getElementById('active-username');
 
     if (usernameEl.value){

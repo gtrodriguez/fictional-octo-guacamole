@@ -22463,6 +22463,10 @@ var _reactDom = __webpack_require__(20);
 
 var _reactRouterDom = __webpack_require__(61);
 
+var _socket = __webpack_require__(511);
+
+var _socket2 = _interopRequireDefault(_socket);
+
 var _landing = __webpack_require__(368);
 
 var _landing2 = _interopRequireDefault(_landing);
@@ -22529,7 +22533,7 @@ var App = function (_React$Component) {
       var _this2 = this;
 
       var that = this;
-      var socket = io();
+      var socket = (0, _socket2.default)();
 
       socket.on('sync-game', function (game) {
         _this2.setState({
@@ -22635,7 +22639,6 @@ var App = function (_React$Component) {
                 var history = _ref.history,
                     match = _ref.match;
 
-                console.log(match, 'match');
                 return _react2.default.createElement(_gameroom2.default, {
                   user: _this3.state.user,
                   connection: _this3.state.connection,
@@ -49227,8 +49230,6 @@ var UserControlPanel = function (_React$Component) {
   }, {
     key: 'connectUser',
     value: function connectUser() {
-      console.log("conenct user");
-
       var usernameEl = document.getElementById('active-username');
 
       if (usernameEl.value) {

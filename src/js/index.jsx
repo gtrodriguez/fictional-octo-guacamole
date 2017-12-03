@@ -1,6 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import io from 'socket.io-client';
 import Landing from './pages/landing';
 import GameRoom from './pages/gameroom';
 import GameList from './pages/gamelist';
@@ -123,7 +124,6 @@ class App extends React.Component {
           <Switch>
             <Route path="/gameroom/:gameId"
               render = {({ history, match }) => {
-                console.log(match,'match');
                 return (<GameRoom
                       user={this.state.user}
                       connection={this.state.connection}
