@@ -54,6 +54,9 @@
   display: flex;
   flex-direction: row;
 }
+.start-warning {
+  padding-top: 8px;
+}
 .player-1 {
   color: black;
 }

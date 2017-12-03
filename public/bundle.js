@@ -53266,16 +53266,18 @@ var GameControlPanel = function (_React$Component) {
   }, {
     key: 'renderPlayer2Row',
     value: function renderPlayer2Row() {
-      return _react2.default.createElement(
-        'div',
-        null,
-        _react2.default.createElement(
-          'strong',
-          { className: 'player-label' },
-          'Player 2:'
-        ),
-        this.props.gameInstance && this.props.gameInstance.player2
-      );
+      if (this.props.gameInstance.player2) {
+        return _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'strong',
+            { className: 'player-label' },
+            'Player 2:'
+          ),
+          this.props.gameInstance && this.props.gameInstance.player2
+        );
+      }
     }
   }, {
     key: 'syncEmail',
@@ -53332,35 +53334,42 @@ var GameControlPanel = function (_React$Component) {
             null,
             _react2.default.createElement(
               'div',
-              null,
+              { className: 'start-warning' },
               _react2.default.createElement(
-                'strong',
-                null,
-                'This game has not been started yet!'
+                _reactBootstrap.Alert,
+                { bsStyle: 'warning' },
+                _react2.default.createElement(
+                  'strong',
+                  null,
+                  'This game has not been started yet!'
+                ),
+                _react2.default.createElement(
+                  'div',
+                  null,
+                  _react2.default.createElement(
+                    'strong',
+                    null,
+                    'Please send this code to another player!'
+                  ),
+                  _react2.default.createElement(
+                    'div',
+                    null,
+                    _react2.default.createElement(
+                      'small',
+                      null,
+                      'Pst, you could also send a an invite to me at gabriel.torres.rodriguez@gmail.com. :)'
+                    )
+                  )
+                )
               )
             ),
             _react2.default.createElement(
               'div',
               null,
               _react2.default.createElement(
-                'strong',
-                null,
-                'Please send this code to another player!'
-              ),
-              _react2.default.createElement(
                 _reactBootstrap.Form,
                 { inline: true },
-                _react2.default.createElement(
-                  _reactBootstrap.FormGroup,
-                  { controlId: 'active-game-id' },
-                  _react2.default.createElement(
-                    _reactBootstrap.ControlLabel,
-                    null,
-                    'GameId:'
-                  ),
-                  _react2.default.createElement(_reactBootstrap.FormControl, { readOnly: true, type: 'text', value: this.props.gameInstance._id })
-                ),
-                ' ',
+                _react2.default.createElement('input', { name: 'active-game-id', id: 'active-game-id', readOnly: true, type: 'hidden', value: this.props.gameInstance._id }),
                 _react2.default.createElement(
                   _reactBootstrap.FormGroup,
                   { controlId: 'player-2-email' },
@@ -53369,6 +53378,7 @@ var GameControlPanel = function (_React$Component) {
                     null,
                     'Player 2 Email:'
                   ),
+                  ' ',
                   _react2.default.createElement(_reactBootstrap.FormControl, {
                     placeholder: 'player2@exampleEmail.com',
                     type: 'text',

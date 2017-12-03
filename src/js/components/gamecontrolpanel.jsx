@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types'
-import {Form, FormControl, ControlLabel, FormGroup, Grid, Row, Col, Button} from 'react-bootstrap';
+import {Form, FormControl, ControlLabel, FormGroup, Grid, Row, Col, Button, Alert} from 'react-bootstrap';
 
 class GameControlPanel extends React.Component {
   constructor(props) {
@@ -22,10 +22,12 @@ class GameControlPanel extends React.Component {
   }
 
   renderPlayer2Row () {
-    return (<div>
-      <strong className="player-label">Player 2:</strong>
-      {this.props.gameInstance && this.props.gameInstance.player2}
-    </div>);
+    if (this.props.gameInstance.player2) {
+      return (<div>
+        <strong className="player-label">Player 2:</strong>
+        {this.props.gameInstance && this.props.gameInstance.player2}
+      </div>);
+    }
   }
 
   syncEmail () {
@@ -55,19 +57,21 @@ class GameControlPanel extends React.Component {
         }
       } else {
         return <div>
-          <div>
-            <strong>This game has not been started yet!</strong>
+          <div className="start-warning">
+            <Alert bsStyle="warning">
+              <strong>This game has not been started yet!</strong>
+              <div>
+                <strong>Please send this code to another player!</strong>
+                <div><small>Pst, you could also send a an invite to me at gabriel.torres.rodriguez@gmail.com. :)</small></div>
+              </div>
+            </Alert>
           </div>
           <div>
-            <strong>Please send this code to another player!</strong>
             <Form inline>
-              <FormGroup controlId="active-game-id">
-                <ControlLabel>GameId:</ControlLabel>
-                <FormControl readOnly type="text" value={this.props.gameInstance._id} />
-              </FormGroup>
-              {' '}
+              <input name="active-game-id" id="active-game-id" readOnly type="hidden" value={this.props.gameInstance._id} />
               <FormGroup controlId="player-2-email">
                 <ControlLabel>Player 2 Email:</ControlLabel>
+                {' '}
                 <FormControl
                 placeholder="player2@exampleEmail.com"
                 type="text"
