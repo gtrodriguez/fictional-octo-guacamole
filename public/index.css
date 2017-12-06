@@ -1,81 +1,81 @@
-.player-label {
+.game-board-container .player-label {
   padding-right: 54px;
 }
-.current-player-label {
+.game-board-container .current-player-label {
   padding-right: 10px;
 }
-.login-form-element {
-  width: 200px;
+.game-board-container .player-1 {
+  color: black;
 }
-.login-label {
-  width: 85px;
+.game-board-container .player-2 {
+  color: red;
 }
-.interactive-tile,
-.game-board-tile {
+.game-board-container .interactive-tile,
+.game-board-container .game-board-tile {
   height: 20px;
   width: 20px;
   padding: 3px 4px;
 }
-.game-board-tile {
+.game-board-container .game-board-tile {
   border: 1px solid grey;
   font-weight: bold;
   text-align: center;
   line-height: 12px;
 }
-.interactive-tile {
+.game-board-container .game-row,
+.game-board-container .interactive-row {
+  display: flex;
+}
+.game-board-container .interactive-row {
+  flex-direction: row;
+}
+.game-board-container .game-row {
+  display: flex;
+  flex-direction: row;
+}
+.game-board-container .interactive-tile {
   border: 1px solid blue;
   margin-bottom: 10px;
   cursor: pointer;
 }
-.interactive-tile:hover {
+.game-board-container .interactive-tile:hover {
   border-color: magenta;
 }
-.interactive-tile .disabled {
+.game-board-container .interactive-tile .disabled {
   border: 1px solid white;
 }
-#accept-btn {
-  right: 0;
-  position: absolute;
+.game-board-container .game-over .interactive-tile {
+  border: 1px solid white;
+  cursor: default;
 }
-#game-board {
+.game-board-container .game-over .interactive-tile:hover {
+  border: 1px solid white;
+}
+.game-board-container .game-board-grid {
   border: 1px solid black;
   display: flex;
   flex-direction: column-reverse;
   width: 162px;
 }
-.game-row,
-#interactive-row {
-  display: flex;
-}
-#interactive-row {
-  flex-direction: row;
-}
-.game-row {
-  display: flex;
-  flex-direction: row;
-}
-.start-warning {
+.game-board-container .control-panel .start-warning {
   padding-top: 8px;
 }
-.player-1 {
-  color: black;
+.landing-page .login-form-element {
+  width: 200px;
 }
-.player-2 {
-  color: red;
+.landing-page .login-label {
+  width: 85px;
 }
-.game-over .interactive-tile {
-  border: 1px solid white;
-  cursor: default;
-}
-.game-over .interactive-tile:hover {
-  border: 1px solid white;
-}
-#control-panel {
+.landing-page .control-panel {
   padding: 10px 0 10px 0;
-}
-button[type="button"] {
-  margin: 5px 0;
 }
 .game-list-page .list-group-item {
   min-height: 62px;
+}
+.game-list-page #accept-btn {
+  right: 0;
+  position: absolute;
+}
+button[type="button"] {
+  margin: 5px 0;
 }

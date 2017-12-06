@@ -65,7 +65,9 @@ class GameSelector extends React.Component {
           </Button>
         </div>
         <div>
-          <Form inline>
+          <Form inline onSubmit={(e) => { e.preventDefault();
+                this.props.handleRegisterGame(this.state.inviteGameId);
+              }}>
             <FormGroup
               controlId="invite-game-id"
               >
@@ -73,15 +75,12 @@ class GameSelector extends React.Component {
                 type="text"
                 placeholder="Game Invite Code"
                 value={this.state.inviteGameId}
-                onChange={this.syncGameInvite} />
+                onChange={this.syncGameInvite}
+                required/>
             </FormGroup>
             <Button
-              type="button"
-              disabled={this.joinDisabled()}
-              onClick={(e) => { e.preventDefault();
-                this.props.handleRegisterGame(this.state.inviteGameId);
-              }}
-            >
+              type="submit"
+              disabled={this.joinDisabled()}>
               Join Game
             </Button>
           </Form>

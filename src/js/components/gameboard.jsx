@@ -18,6 +18,7 @@ class GameBoard extends React.Component {
     //used for calculating a winner, if any
     this.runningScore = {
       currentSelection : null,
+      currentComboLength : 0,
       longestRun: 0,
     };
 
@@ -105,6 +106,7 @@ class GameBoard extends React.Component {
     this.runningScore = {
       currentSelection : null,
       longestRun: 0,
+      currentComboLength: 0,
     };
 
     // horizontal
@@ -226,7 +228,7 @@ class GameBoard extends React.Component {
   }
 
   gameStateClass () {
-    var className = '';
+    var className = 'game-board-container';
     if(this.props.gameInstance.gameOver){
       className += 'game-over';
     }
@@ -270,7 +272,7 @@ class GameBoard extends React.Component {
   render () {
     return (<div id="game-container">
       <div id="game-board-container" className={this.gameStateClass()}>
-        <div id="control-panel">
+        <div className="control-panel">
           <GameControlPanel
             gameInstance={this.props.gameInstance}
             handleGameInvite={this.handleGameInvite}
@@ -281,12 +283,12 @@ class GameBoard extends React.Component {
           }
         </div>
         <div>
-          <div id="interactive-row">
+          <div className="interactive-row">
             {
               this.props.gameInstance.scoreBoard.map((cell, index) => {
-                return <InteractiveTile 
-                  key={index} 
-                  x={index} 
+                return <InteractiveTile
+                  key={index}
+                  index={index}
                   enabled={() => { return this.tileEnabled(index); }} 
                   handleClick={(e) => { e.preventDefault(); if (!this.tileEnabled(index)) return;
                     this.handleClick(index); }}/>
@@ -295,7 +297,7 @@ class GameBoard extends React.Component {
           </div>
         </div>
         <div>
-          <div id="game-board">
+          <div className="game-board-grid">
             {
               this.props.gameInstance.scoreBoard.map((column, x) => {
                 return (<div className="game-row" key={x}>{column.map((cell, y) => {

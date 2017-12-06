@@ -1,127 +1,110 @@
+.game-board-container{
+	.player-label{
+		padding-right: 54px;
+	}
 
-#game-board{
-	
-}
+	.current-player-label{
+		padding-right: 10px;
+	}
 
-#control-panel{
-	
-}
+	.player-1{
+		color: black;
+	}
 
-#game-container{
-	
-}
+	.player-2{
+		color: red;
+	}
 
-.player-label{
-	padding-right: 54px;
-}
+	.interactive-tile, .game-board-tile{
+		height: 20px;
+		width: 20px;
+		padding: 3px 4px;
+	}
 
-.current-player-label{
-	padding-right: 10px;
-}
+	.game-board-tile{
+		border: 1px solid grey;
+		font-weight: bold;
+	  text-align: center;
+	  line-height: 12px;
+	}
 
-.landing-content {
-}
+	.game-row, .interactive-row{
+		display: flex;
+	}
 
-.login-form-element {
-	width: 200px;
-}
+	.interactive-row{
+		flex-direction: row;
+	}
 
-.login-label{
-	width: 85px;
-}
+	.game-row{
+		display: flex;
+		flex-direction: row;
+	}
 
-.interactive-tile, .game-board-tile{
-	height: 20px;
-	width: 20px;
-	padding: 3px 4px;
-}
-
-.game-board-tile{
-	border: 1px solid grey;
-	font-weight: bold;
-  text-align: center;
-  line-height: 12px;
-}
-
-.interactive-tile{
-	border: 1px solid blue;
-	margin-bottom: 10px;
-
-	cursor: pointer;
-
-	&:hover{
-		border-color: magenta;
-	} 
-
-	.disabled{
-		border: 1px solid white;
-	}	
-}
-
-#accept-btn {
-    right: 0;
-    position: absolute;
-}
-
-#game-board{
-	border: 1px solid black;
-	display: flex;
-	flex-direction: column-reverse;
-	width: 162px;
-}
-
-.game-row, #interactive-row{
-	display: flex;
-}
-
-#interactive-row{
-	flex-direction: row;
-}
-
-.game-row{
-	display: flex;
-	flex-direction: row;
-}
-
-.start-warning {
-	padding-top: 8px;
-}
-
-#game-board-container{
-}
-
-.player-1{
-	color: black;
-}
-
-.player-2{
-	color: red;
-}
-
-.game-over{
 	.interactive-tile{
-		border: 1px solid white;
-		cursor: default;
-		
+		border: 1px solid blue;
+		margin-bottom: 10px;
+		cursor: pointer;
+
 		&:hover{
-			border: 1px solid white;
+			border-color: magenta;
 		} 
+
+		.disabled{
+			border: 1px solid white;
+		}	
+	}
+
+	.game-over{
+		.interactive-tile{
+			border: 1px solid white;
+			cursor: default;
+			
+			&:hover{
+				border: 1px solid white;
+			} 
+		}
+	}
+
+	.game-board-grid{
+		border: 1px solid black;
+		display: flex;
+		flex-direction: column-reverse;
+		width: 162px;
+	}
+
+	.control-panel{
+		.start-warning {
+			padding-top: 8px;
+		}
 	}
 }
 
-#control-panel{
-	padding: 10px 0 10px 0;
-}
+.landing-page{
+	.login-form-element {
+		width: 200px;
+	}
 
-button[type="button"]{
-	margin: 5px 0;
+	.login-label{
+		width: 85px;
+	}
+
+	.control-panel{
+		padding: 10px 0 10px 0;
+	}
 }
 
 .game-list-page{
 	.list-group-item {
     min-height: 62px;
 	}
+
+	#accept-btn {
+    right: 0;
+    position: absolute;
+	}
 }
 
-.title{
+button[type="button"]{
+	margin: 5px 0;
 }

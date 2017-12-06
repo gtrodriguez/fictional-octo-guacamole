@@ -5,11 +5,11 @@ exports[`Gameboard renders correctly 1`] = `
   id="game-container"
 >
   <div
-    className=""
+    className="game-board-container"
     id="game-board-container"
   >
     <div
-      id="control-panel"
+      className="control-panel"
     >
       <GameControlPanel
         gameInstance={
@@ -115,61 +115,61 @@ exports[`Gameboard renders correctly 1`] = `
     </div>
     <div>
       <div
-        id="interactive-row"
+        className="interactive-row"
       >
         <InteractiveTile
           enabled={[Function]}
           handleClick={[Function]}
+          index={0}
           key="0"
-          x={0}
         />
         <InteractiveTile
           enabled={[Function]}
           handleClick={[Function]}
+          index={1}
           key="1"
-          x={1}
         />
         <InteractiveTile
           enabled={[Function]}
           handleClick={[Function]}
+          index={2}
           key="2"
-          x={2}
         />
         <InteractiveTile
           enabled={[Function]}
           handleClick={[Function]}
+          index={3}
           key="3"
-          x={3}
         />
         <InteractiveTile
           enabled={[Function]}
           handleClick={[Function]}
+          index={4}
           key="4"
-          x={4}
         />
         <InteractiveTile
           enabled={[Function]}
           handleClick={[Function]}
+          index={5}
           key="5"
-          x={5}
         />
         <InteractiveTile
           enabled={[Function]}
           handleClick={[Function]}
+          index={6}
           key="6"
-          x={6}
         />
         <InteractiveTile
           enabled={[Function]}
           handleClick={[Function]}
+          index={7}
           key="7"
-          x={7}
         />
       </div>
     </div>
     <div>
       <div
-        id="game-board"
+        className="game-board-grid"
       >
         <div
           className="game-row"

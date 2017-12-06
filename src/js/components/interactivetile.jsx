@@ -20,6 +20,7 @@ class InteractiveTile extends React.Component {
     return (<div
       className={this.interactiveTitleClassName()}
       onClick={(e) => { e.preventDefault(); this.props.handleClick(e); }}
+      data-index={this.props.index}
     />);
   }
 }
@@ -27,6 +28,7 @@ class InteractiveTile extends React.Component {
 InteractiveTile.propTypes = {
   enabled: PropTypes.func.isRequired,
   handleClick: PropTypes.func.isRequired,
+  index: PropTypes.number.isRequired,
 };
 
 export default InteractiveTile;

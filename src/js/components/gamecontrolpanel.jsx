@@ -67,7 +67,10 @@ class GameControlPanel extends React.Component {
             </Alert>
           </div>
           <div>
-            <Form inline>
+            <Form inline onSubmit={(e) => {
+                e.preventDefault();
+                this.props.handleGameInvite(this.state.inviteeEmail);
+              }}>
               <input name="active-game-id" id="active-game-id" readOnly type="hidden" value={this.props.gameInstance._id} />
               <FormGroup controlId="player-2-email">
                 <ControlLabel>Player 2 Email:</ControlLabel>
@@ -76,13 +79,11 @@ class GameControlPanel extends React.Component {
                 placeholder="player2@exampleEmail.com"
                 type="text"
                 onChange={(e) => {e.preventDefault(); this.syncEmail();}}
+                required
                 />
               </FormGroup>
               {' '}
-              <Button bsStyle="primary" disabled={this.disableInviteBtn()} onClick={(e) => {
-                e.preventDefault();
-                this.props.handleGameInvite(this.state.inviteeEmail);
-              }}>
+              <Button bsStyle="primary" type="submit" disabled={this.disableInviteBtn()}>
                 Invite
               </Button>
             </Form>
