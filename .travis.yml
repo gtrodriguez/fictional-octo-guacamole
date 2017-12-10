@@ -4,9 +4,7 @@ node_js:
 - '7'
 - '6'
 env:
-- MONGODB_CONNECTION_STR=mongodb://travis:test@127.0.0.1:21686/mydb_test
-- APP_BASE_URL=http://localhost:5000
-- ENABLE_EMAIL=false
+- MONGODB_CONNECTION_STR=mongodb://travis:test@127.0.0.1:21686/mydb_test APP_BASE_URL=http://localhost:5000 EMAIL_ENABLED=false
 cache:
   directories:
   - node_modules
