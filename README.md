@@ -1,6 +1,6 @@
 # Connect X
 
-[![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
+[![Build Status](https://travis-ci.org/gtrodriguez/fictional-octo-guacamole.svg?branch=master)](https://travis-ci.org/gtrodriguez/fictional-octo-guacamole)
 
 Connect X is a multiplayer game project used to experiment with React.
 Long term goals include adding an artificial intelligent opponent,
