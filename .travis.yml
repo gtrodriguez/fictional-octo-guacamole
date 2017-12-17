@@ -13,8 +13,4 @@ services:
 before_script:
 - sleep 15
 - mongo mydb_test --eval 'db.createUser({user:"travis",pwd:"test",roles:["readWrite"]});'
-deploy:
-  provider: heroku
-  app: calm-citadel-89840
-  api_key:
-    secure: Ca1AbDeOoWznWYlJKZWKgvafdJzLTyEYzZg3iB3Iyxy1o3FNtQ74XalZyJrLsl5IWvm008jyZqc1PcAvw8Ei8WW4YZpDUcce0lCQUNgceaa1KyT4MUWJfPkl1zLdR5OQ4Ij7yIcs1tiGndHQzry0RWBo5/tNR3gR+/GLatPl2RDPtSiCbXgMjgSGAscclXBEl6dZz8yELEpGlemeLMEeGf5rIWmlKknwtiFOikclJYeeI56+aKcZUppVbDLGTVHji2VlbAYRPoGgF3UAhIXVTo228HX01TzA1zKEHNtjLiybAbeWgUgjFRfMPwkQfyuvNhn1210UiGQtMnT19DvIUz1aM9ZmDJ5tO1guz7C1mFJx9JOC36F6bEcA3wYq+SQocHQIa77+h+378Yzx4iwF4ZIx3vcekTXvI9Sr6zCzhE7vfr8fJ1uYl5r6ZVUkRp3W6cnDTpqQIpDT96dzdbfUP+bgRM0DTeEJMYHwGHBW+Ij768NXZ5QIek8//CybwHg9qmJJEXezPZ+Yh2N47isJlVM4hzAhulke6umlaP9p97RyuDdXfK4hmFdifMJMa330cgAkvNUaLQtUU9r0+bRNYu6caU1ZgS/QYZwLrXlmq+wNwDLgkIATv4CzC7UFgVlxxjgLB103wbXgK1qBtzSGhsGoQEgaUlT6plwvaQQaonQ=
+- mongo mydb_test --eval 'db.users.insert({_id:"abc123",username:"Player1",email:"player1@email.com"});db.users.insert({_id:"def456",username:"Player2",email:"player2@email.com"});'

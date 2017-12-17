@@ -2,9 +2,11 @@ import React from 'react';
 import io from 'socket.io-client';
 import PropTypes from 'prop-types';
 import { Grid, Row, Col, Alert } from 'react-bootstrap';
+import { connect } from 'react-redux';
 import InteractiveTile from './interactivetile';
 import GameBoardTile from './gameboardtile';
 import GameControlPanel from './gamecontrolpanel';
+import { setGameInstance } from '../actionCreators';
 
 class GameBoard extends React.Component {
   constructor(props) {
@@ -198,10 +200,6 @@ class GameBoard extends React.Component {
     return false;
   }
 
-  isSlotOpen(index){
-    return !this.props.gameInstance.scoreBoard[this.maxY-1][index];
-  }
-
   ///put in the first available slot starting from the top
   handleClick(index) {
     var newGameInstance = Object.assign({}, this.props.gameInstance);
@@ -223,7 +221,7 @@ class GameBoard extends React.Component {
       }
     }
 
-    this.props.updateGameInstance(newGameInstance);
+    this.props.handleGameInstanceUpdate(newGameInstance);
     this.submitGameUpdate(newGameInstance);
   }
 
@@ -237,6 +235,10 @@ class GameBoard extends React.Component {
 
   submitGameUpdate(newGameInstance) {
     this.props.connection.emit('player-submit-turn', newGameInstance);
+  }
+
+  isSlotOpen(index){
+    return !this.props.gameInstance.scoreBoard[this.maxY-1][index];
   }
 
   tileEnabled(index) {
@@ -315,8 +317,14 @@ class GameBoard extends React.Component {
 GameBoard.PropTypes = {
   gameInstance: PropTypes.object.isRequired,
   connection: PropTypes.object.isRequired,
-  updateGameInstance: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
 };
 
-export default GameBoard;
+const mapDispatchToProps = (dispatch) => ({
+  handleGameInstanceUpdate(gameInstance) {
+    dispatch(setGameInstance(gameInstance));
+  }
+});
+
+export const UnwrappedGameBoard = GameBoard;
+export default connect(null,mapDispatchToProps)(GameBoard);

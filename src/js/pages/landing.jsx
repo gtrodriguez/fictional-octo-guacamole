@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Grid, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import UserControlPanel from '../components/usercontrolpanel';
 
@@ -12,10 +13,22 @@ class Landing extends React.Component {
     this.submitUserRegistration = this.submitUserRegistration.bind(this);
     this.renderWelcomeMessage = this.renderWelcomeMessage.bind(this);
     this.renderGameColumn = this.renderGameColumn.bind(this);
+
+    if (this.props.connection) {
+      this.registerSocketEvents();
+    }
   }
 
-  componentDidMount() {
-    this.props.connection.on('register-success', (response) => {
+  componentWillReceiveProps(nextProps) {
+    // if parent socket.io connection is initialized in this page,
+    // then load the necessary components.
+    if (!this.props.connection && nextProps.connection) {
+      this.registerSocketEvents();
+    }
+  }
+
+  registerSocketEvents(){
+    this.props.connection.on('register-success', () => {
       this.props.history.push('/gamelist');
     });
 
@@ -48,10 +61,10 @@ class Landing extends React.Component {
     if (this.props.user === null && !this.props.inviteGameId) {
       return <div className="landing-content">You must first sign in or register.</div>;
     } else if (this.props.user === null && this.props.inviteGameId) {
-      return (<div className="landing-content">You've been invited to a game but
+      return (<div className="landing-content">You&apos;ve been invited to a game but
       first sign in or register.</div>);
-    } else if(this.props.inviteGameId) {
-      return (<div className="landing-content">You've been invited to a game!</div>);
+    } else if (this.props.inviteGameId) {
+      return (<div className="landing-content">You&apos;ve been invited to a game!</div>);
     }
     return null;
   }
@@ -100,15 +113,20 @@ class Landing extends React.Component {
 
 Landing.defaultProps = {
   user: null,
+  connection: null,
   inviteGameId: '',
 };
 
 Landing.propTypes = {
   user: PropTypes.object,
   history: PropTypes.object.isRequired,
-  connection: PropTypes.object.isRequired,
-  handleConnect: PropTypes.func.isRequired,
+  connection: PropTypes.object,
   inviteGameId: PropTypes.string,
 };
 
-export default Landing;
+const mapStateToProps = (state) => ({
+  user: state.user,
+  connection: state.connection,
+});
+
+export default connect(mapStateToProps)(Landing);

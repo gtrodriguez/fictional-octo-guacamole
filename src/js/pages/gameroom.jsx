@@ -1,18 +1,20 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Grid, Row, Col } from 'react-bootstrap';
+import { connect } from 'react-redux';
 import GameBoard from '../components/gameboard';
 
 class GameRoom extends React.Component {
-  componentWillReceiveProps(nextProps) {
-    // if parent socket.io connection is initialized in this page, then load the necessary components.
-    if (!this.props.user && nextProps.user) {
+  componentDidMount() {
+    if (this.props.user) {
       this.props.connection.emit('select-game', { _id: this.props.gameId });
     }
   }
 
-  componentDidMount() {
-    if (this.props.user) {
+  componentWillReceiveProps(nextProps) {
+    // if parent socket.io connection is initialized in this page,
+    // then load the necessary components.
+    if (!this.props.user && nextProps.user) {
       this.props.connection.emit('select-game', { _id: this.props.gameId });
     }
   }
@@ -22,7 +24,6 @@ class GameRoom extends React.Component {
       if (this.props.gameInstance != null && this.props.user != null) {
         return (<GameBoard
           gameInstance={this.props.gameInstance}
-          updateGameInstance={this.props.updateGameInstance}
           connection={this.props.connection}
           user={this.props.user}
         />);
@@ -55,15 +56,24 @@ GameRoom.defaultProps = {
   gameId: null,
   gameInstance: null,
   user: null,
+  connection: null,
 };
 
 
 GameRoom.propTypes = {
-  connection: PropTypes.object.isRequired,
+  connection: PropTypes.object,
   user: PropTypes.object,
   gameId: PropTypes.string,
   gameInstance: PropTypes.object,
-  updateGameInstance: PropTypes.func.isRequired,
 };
 
-export default GameRoom;
+const mapStateToProps = (state) => ({
+  user: state.user,
+  connection: state.connection,
+  gameInstance: state.gameInstance,
+});
+
+const mapDispatchToProps = (state) => ({
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameRoom);

@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { logout } from '../actionCreators';
 
 class Logout extends React.Component {
   componentDidMount() {
     sessionStorage.removeItem('user');
-    this.props.resetState();
+    this.props.handleLogout();
     this.props.history.push('/');
   }
 
@@ -15,7 +17,12 @@ class Logout extends React.Component {
 
 Logout.propTypes = {
   history: PropTypes.object.isRequired,
-  resetState: PropTypes.func.isRequired,
 };
 
-export default Logout;
+const mapDispatchToProps = (dispatch) => ({
+  handleLogout() {
+    dispatch(logout());
+  }
+});
+
+export default connect(null,mapDispatchToProps)(Logout);

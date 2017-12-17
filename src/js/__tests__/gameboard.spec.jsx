@@ -2,7 +2,7 @@ import React from 'react';
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-15';
 import Header from '../components/header';
-import GameBoard from '../components/gameboard';
+import { UnwrappedGameBoard } from '../components/gameboard';
 import socketClient from 'socket.io-client';
 
 describe('Gameboard', () =>{
@@ -42,7 +42,7 @@ describe('Gameboard', () =>{
   };
 
   it('renders correctly',() => {
-    const component = Enzyme.shallow(<GameBoard
+    const component = Enzyme.shallow(<UnwrappedGameBoard
       gameInstance={gameInstance}
       user={user}
       connection={connection} />);
@@ -50,11 +50,11 @@ describe('Gameboard', () =>{
   });
 
   it('detects wins correctly', () => {
-    const component = Enzyme.mount(<GameBoard
+    const component = Enzyme.mount(<UnwrappedGameBoard
       gameInstance={JSON.parse(JSON.stringify(gameInstance))}
       user={user}
       connection={connection}
-      updateGameInstance={updateGameInstance} />);
+      handleGameInstanceUpdate={updateGameInstance} />);
 
     // test to see if updateGameInstance has not been called when game not active
     component.find('.interactive-tile[data-index=0]').simulate('click');

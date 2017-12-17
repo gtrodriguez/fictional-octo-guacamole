@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import GameSelector from '../components/gameselector';
 
 class GameList extends React.Component {
@@ -11,14 +12,26 @@ class GameList extends React.Component {
     this.renderGameColumn = this.renderGameColumn.bind(this);
     this.createNewGame = this.createNewGame.bind(this);
     this.renderGameColumn = this.renderGameColumn.bind(this);
+
+    if (this.props.connection) {
+      this.registerSocketEvents();
+    }
   }
 
-  componentDidMount() {
+  componentWillReceiveProps(nextProps) {
+    // if parent socket.io connection is initialized in this page,
+    // then load the necessary components.
+    if (!this.props.connection && nextProps.connection) {
+      this.registerSocketEvents();
+    }
+  }
+
+  registerSocketEvents(){
     this.props.connection.on('register-success', (game) => {
       this.props.history.push(`/gameroom/${game._id}`);
     });
 
-    this.props.connection.on('register-error', (msg) => {
+    this.props.connection.on('register-error', () => {
       window.alert('An error occured while registering the game.');
     });
 
@@ -30,7 +43,7 @@ class GameList extends React.Component {
 
   handleRegisterGame(gameId) {
     this.props.connection.emit('register-game', {
-      gameId: gameId,
+      gameId,
       username: this.props.user.username,
     });
   }
@@ -96,8 +109,13 @@ GameList.propTypes = {
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   allGames: PropTypes.arrayOf(PropTypes.object),
-  handleGameRetrieval: PropTypes.func.isRequired,
   inviteGameId: PropTypes.string,
 };
 
-export default GameList;
+const mapStateToProps = (state) => ({
+  user: state.user,
+  connection: state.connection,
+  allGames: state.allGames,
+});
+
+export default connect(mapStateToProps)(GameList);
