@@ -34,6 +34,8 @@ describe('Gameboard', () =>{
     _id: '123456',
     gameOver: false,
   },
+  allGames = [],
+  handleSyncAllGames = function(){/**/},
   newGameInstance = JSON.parse(JSON.stringify(gameInstance));
 
   //placeholder for the update method passed to gameboard
@@ -45,7 +47,10 @@ describe('Gameboard', () =>{
     const component = Enzyme.shallow(<UnwrappedGameBoard
       gameInstance={gameInstance}
       user={user}
-      connection={connection} />);
+      connection={connection}
+      handleGameInstanceUpdate={updateGameInstance}
+      handleSyncAllGames={handleSyncAllGames} 
+      allGames={allGames} />);
     expect(component).toMatchSnapshot();
   });
 
@@ -54,7 +59,9 @@ describe('Gameboard', () =>{
       gameInstance={JSON.parse(JSON.stringify(gameInstance))}
       user={user}
       connection={connection}
-      handleGameInstanceUpdate={updateGameInstance} />);
+      handleGameInstanceUpdate={updateGameInstance}
+      handleSyncAllGames={handleSyncAllGames} 
+      allGames={allGames} />);
 
     // test to see if updateGameInstance has not been called when game not active
     component.find('.interactive-tile[data-index=0]').simulate('click');

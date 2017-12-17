@@ -10,15 +10,11 @@ class ConnectionLayer extends React.Component {
     const socket = io();
 
     socket.on('sync-game', (game) => {
-      this.props.handleLoadGameInstance({
-        gameInstance: game,
-      });
+      this.props.handleLoadGameInstance(game);
     });
 
     socket.on('sync-game-list', (games) => {
-      this.props.handleSyncAllGames({
-        allGames: games,
-      });
+      this.props.handleSyncAllGames(games);
     });
 
     socket.on('login-success', (response) => {

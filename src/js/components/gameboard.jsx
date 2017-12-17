@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import InteractiveTile from './interactivetile';
 import GameBoardTile from './gameboardtile';
@@ -23,8 +22,6 @@ class GameBoard extends React.Component {
       longestRun: 0,
     };
 
-    this.state = { emailSent: false };
-
     this.updateScore = this.updateScore.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.checkGameBoard = this.checkGameBoard.bind(this);
@@ -33,8 +30,6 @@ class GameBoard extends React.Component {
     this.resolvePlayerSymbol = this.resolvePlayerSymbol.bind(this);
     this.tileEnabled = this.tileEnabled.bind(this);
     this.checkForWinner = this.checkForWinner.bind(this);
-    this.handleGameInvite = this.handleGameInvite.bind(this);
-    this.renderEmailSentAlert = this.renderEmailSentAlert.bind(this);
   }
 
   resolvePlayerSymbol(playerName) {
@@ -50,7 +45,6 @@ class GameBoard extends React.Component {
     if (this.runningScore.currentSelection === null) {
       this.runningScore.currentSelection = cellVal;
     }
-
     if (cellVal) {
       if (cellVal === this.runningScore.currentSelection) {
         this.runningScore.currentComboLength += 1;
@@ -58,7 +52,6 @@ class GameBoard extends React.Component {
         this.runningScore.currentComboLength = 1;
         this.runningScore.currentSelection = cellVal;
       }
-
       if (this.runningScore.currentComboLength === 4) {
         return true;
       }
@@ -66,7 +59,6 @@ class GameBoard extends React.Component {
       this.runningScore.currentSelection = null;
       this.runningScore.currentComboLength = 0;
     }
-
     return false;
   }
 
@@ -75,7 +67,6 @@ class GameBoard extends React.Component {
       console.log(`Player ${this.resolvePlayerSymbol(gameInstance.currentPlayer)} won ${direction}!`);
       return true;
     }
-
     return false;
   }
 
@@ -206,7 +197,7 @@ class GameBoard extends React.Component {
   }
 
   gameStateClass() {
-    let className = 'game-board-container';
+    let className = 'game-board-container ';
     if (this.props.gameInstance.gameOver) {
       className += 'game-over';
     }
@@ -228,42 +219,17 @@ class GameBoard extends React.Component {
           !this.isSlotOpen(index));
   }
 
-  handleGameInvite(inviteeEmail) {
-    const that = this;
-    this.props.connection.emit('invite-player', {
-      gameId: this.props.gameInstance._id,
-      senderUserName: this.props.user.username,
-      email: inviteeEmail,
-    });
-
-    this.setState({ emailSent: true });
-
-    setTimeout(() => {
-      that.setState({ emailSent: false });
-    }, 4000);
-  }
-
-  renderEmailSentAlert() {
-    if (this.state.emailSent) {
-      return (<Alert bsStyle="success">
-        <strong>Game Invite Sent!</strong> Tell your pal to check their email!
-      </Alert>);
-    }
-    return null;
-  }
-
   render() {
     return (<div id="game-container">
       <div id="game-board-container" className={this.gameStateClass()}>
         <div className="control-panel">
-          <GameControlPanel
+          <GameControlPanel 
             gameInstance={this.props.gameInstance}
-            handleGameInvite={this.handleGameInvite}
             user={this.props.user}
+            connection={this.props.connection}
+            allGames={this.props.allGames}
+            handleSyncAllGames={this.props.handleSyncAllGames}
           />
-          {
-            this.renderEmailSentAlert()
-          }
         </div>
         <div>
           <div className="interactive-row">
@@ -272,6 +238,7 @@ class GameBoard extends React.Component {
                 (<InteractiveTile
                   index={index}
                   enabled={(this.tileEnabled(index))}
+                  key={`interactivetile-${index}`} // eslint-disable-line react/no-array-index-key
                   handleClick={
                     (e) => {
                       e.preventDefault(); if (!this.tileEnabled(index)) { return; }
@@ -286,14 +253,22 @@ class GameBoard extends React.Component {
           <div className="game-board-grid">
             {
               this.props.gameInstance.scoreBoard.map((column, x) =>
-                (<div className="game-row">{column.map((cell, y) =>
-                  (<GameBoardTile
-                    data-x={x}
-                    data-y={y}
-                    value={this.resolvePlayerSymbol(cell)}
-                  />))
-                })
-                </div>))
+                (
+                  <div
+                    className="game-row"
+                    key={`game-row-${x}`} // eslint-disable-line react/no-array-index-key
+                  >
+                    {column.map((cell, y) =>
+                      (<GameBoardTile
+                        data-x={x}
+                        data-y={y}
+                        key={`game-cell-${x}-${y}`} // eslint-disable-line react/no-array-index-key
+                        value={this.resolvePlayerSymbol(cell)}
+                      />))
+                    }
+                  </div>
+                ),
+              )
             }
           </div>
         </div>
@@ -306,12 +281,17 @@ GameBoard.propTypes = {
   gameInstance: PropTypes.object.isRequired,
   connection: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
+  allGames: PropTypes.array.isRequired,
   handleGameInstanceUpdate: PropTypes.func.isRequired,
+  handleSyncAllGames: PropTypes.func.isRequired,
 };
 
 const mapDispatchToProps = dispatch => ({
   handleGameInstanceUpdate(gameInstance) {
     dispatch(setGameInstance(gameInstance));
+  },
+  handleSyncAllGames(games) {
+    dispatch(setAllGames(games));
   },
 });
 

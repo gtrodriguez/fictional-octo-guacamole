@@ -16,8 +16,6 @@ function startServer() {
     res.sendFile(path.join(__dirname + '/example.html'));
   });
 
-  //http.listen(process.env.PORT || 3000);
-
   let gameInstance = null;
   let timeStamp = null;
   let currentPlayer = null;
@@ -132,8 +130,6 @@ function startServer() {
 
     // send an email to another player with a link to the game room
     socket.on('invite-player', function(request){
-      // tbd
-      // 
       // send an email with a link to the game instance
       Game.findOne({_id: request.gameId}, function (err, game){
         if (err)

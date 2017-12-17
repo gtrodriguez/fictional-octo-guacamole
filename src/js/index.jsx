@@ -38,19 +38,19 @@ class App extends React.Component {
                 />
                 <Route
                   exact
+                  path="/logout"
+                  render={({ history }) =>
+                    <Logout history={history} />
+                  }
+                />
+                <Route
+                  exact
                   path="/:inviteGameId?"
                   render={({ history, match }) =>
                     (<Landing
                       history={history}
                       inviteGameId={match.params.inviteGameId}
                     />)}
-                />
-                <Route
-                  exact
-                  path="/logout"
-                  render={({ history }) =>
-                    <Logout history={history} />
-                  }
                 />
               </Switch>
             </div>

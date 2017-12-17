@@ -9,9 +9,6 @@ class GameList extends React.Component {
   constructor(props) {
     super(props);
 
-    this.handleRegisterGame = this.handleRegisterGame.bind(this);
-    this.renderGameColumn = this.renderGameColumn.bind(this);
-    this.createNewGame = this.createNewGame.bind(this);
     this.renderGameColumn = this.renderGameColumn.bind(this);
 
     if (this.props.connection) {
@@ -57,6 +54,7 @@ class GameList extends React.Component {
       games={this.props.allGames}
       inviteGameId={this.props.match.params.inviteGameId}
       user={this.props.user}
+      connection={this.props.connection}
     />);
   }
 

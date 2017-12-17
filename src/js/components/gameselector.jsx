@@ -17,10 +17,8 @@ class GameSelector extends React.Component {
   }
 
   componentDidMount() {
-    this.onMount(function callback() {
-      this.setState({
-        inviteGameId: this.props.inviteGameId,
-      });
+    this.setState({
+      inviteGameId: this.props.inviteGameId,
     });
   }
 
@@ -91,7 +89,7 @@ class GameSelector extends React.Component {
           inline
           onSubmit={(e) => {
             e.preventDefault();
-            this.props.handleRegisterGame(this.state.inviteGameId);
+            this.handleRegisterGame(this.state.inviteGameId);
           }}
         >
           <FormGroup controlId="invite-game-id">
@@ -132,7 +130,6 @@ GameSelector.propTypes = {
   games: PropTypes.arrayOf(PropTypes.object),
   connection: PropTypes.object.isRequired,
   inviteGameId: PropTypes.string,
-  handleRegisterGame: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
 };
 

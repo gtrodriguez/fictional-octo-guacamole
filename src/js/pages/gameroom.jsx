@@ -26,6 +26,7 @@ class GameRoom extends React.Component {
           gameInstance={this.props.gameInstance}
           connection={this.props.connection}
           user={this.props.user}
+          allGames={this.props.allGames}
         />);
       }
       return <h3>Loading game...</h3>;
@@ -65,12 +66,14 @@ GameRoom.propTypes = {
   user: PropTypes.object,
   gameId: PropTypes.string,
   gameInstance: PropTypes.object,
+  allGames: PropTypes.array.isRequired,
 };
 
 const mapStateToProps = state => ({
   user: state.user,
   connection: state.connection,
   gameInstance: state.gameInstance,
+  allGames: state.allGames,
 });
 
 export default connect(mapStateToProps)(GameRoom);

@@ -1,6 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { Form, FormControl, ControlLabel, FormGroup, Button, Alert } from 'react-bootstrap';
+import { connect } from 'react-redux';
+import { setAllGames } from '../actionCreators';
 
 class GameControlPanel extends React.Component {
   constructor(props) {
@@ -8,10 +10,20 @@ class GameControlPanel extends React.Component {
 
     this.syncEmail = this.syncEmail.bind(this);
     this.disableInviteBtn = this.disableInviteBtn.bind(this);
+    this.handleGameInvite = this.handleGameInvite.bind(this);
+    this.renderEmailSentAlert = this.renderEmailSentAlert.bind(this);
 
     this.state = {
       inviteeEmail: null,
+      emailSent: false,
+      animationHandler: null,
     };
+  }
+
+  componentWillUnmount() {
+    if (this.state.animationHandler) {
+      clearTimeout(this.state.animationHandler);
+    }
   }
 
   syncEmail() {
@@ -20,6 +32,33 @@ class GameControlPanel extends React.Component {
 
   disableInviteBtn() {
     return this.state.inviteeEmail === '' && this.state.inviteeEmail === null;
+  }
+
+  handleGameInvite(inviteeEmail) {
+    const that = this;
+    this.props.connection.emit('invite-player', {
+      gameId: this.props.gameInstance._id,
+      senderUserName: this.props.user.username,
+      email: inviteeEmail,
+    });
+    this.setState({
+      emailSent: true,
+      animationHandler: setTimeout(() => {
+        that.setState({ emailSent: false, animationHandler: null });
+      }, 4000),
+    });
+    const newGameList = this.props.allGames.slice();
+    newGameList.find(game => game._id === this.props.gameInstance._id).inviteeEmail = inviteeEmail;
+    this.props.handleSyncAllGames(newGameList);
+  }
+
+  renderEmailSentAlert() {
+    if (this.state.emailSent) {
+      return (<Alert bsStyle="success">
+        <strong>Game Invite Sent!</strong> Tell your pal to check their email!
+      </Alert>);
+    }
+    return null;
   }
 
   renderPlayer1Row() {
@@ -73,7 +112,7 @@ class GameControlPanel extends React.Component {
             inline
             onSubmit={(e) => {
               e.preventDefault();
-              this.props.handleGameInvite(this.state.inviteeEmail);
+              this.handleGameInvite(this.state.inviteeEmail);
             }}
           >
             <input
@@ -99,6 +138,9 @@ class GameControlPanel extends React.Component {
             </Button>
           </Form>
         </div>
+        {
+          this.renderEmailSentAlert()
+        }
       </div>);
     }
 
@@ -117,7 +159,9 @@ class GameControlPanel extends React.Component {
 GameControlPanel.propTypes = {
   gameInstance: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
-  handleGameInvite: PropTypes.func.isRequired,
+  connection: PropTypes.object.isRequired,
+  allGames: PropTypes.array.isRequired,
+  handleSyncAllGames: PropTypes.func.isRequired,
 };
 
 export default GameControlPanel;
