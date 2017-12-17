@@ -27,7 +27,8 @@ class GameLink extends React.Component {
           {this.props.game.player2}
         </Col>
       </Row>);
-    } else if (this.props.game.player2 === this.props.user.username || this.props.game.inviteeEmail === this.props.user.email) {
+    } else if (this.props.game.player2 === this.props.user.username
+        || this.props.game.inviteeEmail === this.props.user.email) {
       return (<Row>
         <Col sm={2}>
           <strong>Sent By:</strong>
@@ -37,11 +38,15 @@ class GameLink extends React.Component {
         </Col>
         <Col sm={4}>
           <Button
-          bsStyle="success"
-          bsSize="small"
-          type="button"
-          onClick={(e) => { e.preventDefault(); e.stopPropagation(); this.props.handleRegisterGame(this.props.game._id); }}
-          id="accept-btn">
+            bsStyle="success"
+            bsSize="small"
+            type="button"
+            onClick={(e) => {
+              e.preventDefault(); e.stopPropagation();
+              this.props.handleRegisterGame(this.props.game._id);
+            }}
+            id="accept-btn"
+          >
             Accept Invite
           </Button>
         </Col>
@@ -52,19 +57,20 @@ class GameLink extends React.Component {
           <strong>{this.props.game.player2} has not yet accepted the invite!</strong>
         </Col>
       </Row>);
-    } else if (this.props.game.inviteeEmail) { 
+    } else if (this.props.game.inviteeEmail) {
       return (<Row>
         <Col sm={8}>
-          <strong>Email sent to {this.props.game.inviteeEmail}, but has not yet accepted the invite!</strong>
-        </Col>
-      </Row>);
-    } else {
-      return (<Row>
-        <Col sm={8}>
-          <strong>Invite Not Sent!</strong>
+          <strong>Email sent to {this.props.game.inviteeEmail},
+            but has not yet accepted the invite!</strong>
         </Col>
       </Row>);
     }
+
+    return (<Row>
+      <Col sm={8}>
+        <strong>Invite Not Sent!</strong>
+      </Col>
+    </Row>);
   }
 
   renderLinkContent() {
@@ -77,7 +83,7 @@ class GameLink extends React.Component {
               <strong>Last Updated:</strong>
             </Col>
             <Col sm={6}>
-              {this.props.game.lastUpdated ? (new Date(this.props.game.lastUpdated)).toLocaleString('en-US') : ""}
+              {this.props.game.lastUpdated ? (new Date(this.props.game.lastUpdated)).toLocaleString('en-US') : ''}
             </Col>
           </Row>
         </Grid>
@@ -90,16 +96,18 @@ class GameLink extends React.Component {
   }
 
   render() {
-    return (<ListGroupItem data-game-instance-id={this.props.game._id}
-      key={this.props.game._id}>
+    return (<ListGroupItem
+      data-game-instance-id={this.props.game._id}
+      key={this.props.game._id}
+    >
       { this.renderLinkContent() }
     </ListGroupItem>);
   }
 }
 
 GameLink.defaultProps = {
-  handleRegisterGame: null
-}
+  handleRegisterGame: null,
+};
 
 GameLink.propTypes = {
   game: PropTypes.object.isRequired,

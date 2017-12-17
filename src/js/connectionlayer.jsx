@@ -1,35 +1,32 @@
 import React from 'react';
+import io from 'socket.io-client';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import { setSocketConnection, setUserDetails, setGameInstance, setAllGames } from './actionCreators';
 
 class ConnectionLayer extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentWillMount() {
-    const that = this;
     const socket = io();
 
     socket.on('sync-game', (game) => {
-      that.props.handleLoadGameInstance({
+      this.props.handleLoadGameInstance({
         gameInstance: game,
       });
     });
 
     socket.on('sync-game-list', (games) => {
-      that.props.handleSyncAllGames({
+      this.props.handleSyncAllGames({
         allGames: games,
       });
     });
 
     socket.on('login-success', (response) => {
-      that.props.handleLoadUserDetails(response);
+      this.props.handleLoadUserDetails(response);
     });
 
     socket.on('retrieve-game', (game) => {
-      that.props.handleLoadGameInstance(game);
+      this.props.handleLoadGameInstance(game);
     });
 
     socket.on('invite-to-game', (request) => {
@@ -38,7 +35,7 @@ class ConnectionLayer extends React.Component {
 
     const cachedUser = sessionStorage.getItem('user');
 
-    if(cachedUser != null && !this.props.user){
+    if (cachedUser != null && !this.props.user) {
       const user = JSON.parse(cachedUser);
       socket.emit('login', user.username);
     }
@@ -46,18 +43,28 @@ class ConnectionLayer extends React.Component {
     this.props.handleConnect(socket);
   }
 
-  componentDidMount() {
-  }
-
-  componentWillUnmount() {
-  }
-
-  render () {
+  render() {
     return <div className="connection-layer">{ this.props.children }</div>;
   }
+}
+
+ConnectionLayer.defaultProps = {
+  user: null,
 };
 
-const mapDispatchToProps = (dispatch) => ({
+ConnectionLayer.propTypes = {
+  user: PropTypes.object,
+  handleConnect: PropTypes.func.isRequired,
+  handleLoadUserDetails: PropTypes.func.isRequired,
+  handleLoadGameInstance: PropTypes.func.isRequired,
+  handleSyncAllGames: PropTypes.func.isRequired,
+  children: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.node),
+    PropTypes.node,
+  ]).isRequired,
+};
+
+const mapDispatchToProps = dispatch => ({
   handleConnect(connection) {
     dispatch(setSocketConnection(connection));
   },
@@ -70,7 +77,7 @@ const mapDispatchToProps = (dispatch) => ({
   },
   handleSyncAllGames(response) {
     dispatch(setAllGames(response));
-  }
+  },
 });
 
 export default withRouter(connect(() => ({}), mapDispatchToProps)(ConnectionLayer));

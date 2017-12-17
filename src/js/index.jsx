@@ -2,7 +2,6 @@ import React from 'react';
 import { render } from 'react-dom';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import io from 'socket.io-client';
 import store from './store';
 import ConnectionLayer from './connectionlayer';
 import Landing from './pages/landing';
@@ -12,14 +11,6 @@ import Header from './components/header';
 import Logout from './pages/logout';
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
-  alertWin() {
-    window.alert('You won the game!');
-  }
-
   render() {
     return (
       <BrowserRouter>
@@ -30,33 +21,37 @@ class App extends React.Component {
               <Switch>
                 <Route
                   path="/gameroom/:gameId"
-                  render={({ history, match }) => {
-                    return (<GameRoom
+                  render={({ history, match }) =>
+                    (<GameRoom
                       gameId={match.params.gameId}
                       history={history}
-                    />);}} />
+                    />)}
+                />
                 <Route
                   path="/gamelist/:inviteGameId?"
-                  render={({ history, match }) => {
-                    return (<GameList
+                  render={({ history, match }) =>
+                    (<GameList
                       history={history}
                       match={match}
-                      inviteGameId={match.params.inviteGameId} />
-                    );}}
-                  />
-                <Route exact
+                      inviteGameId={match.params.inviteGameId}
+                    />)}
+                />
+                <Route
+                  exact
                   path="/:inviteGameId?"
-                  render={({ history, match }) => (<Landing
-                    history={history}
-                    inviteGameId={match.params.inviteGameId}
-                  />)} />
+                  render={({ history, match }) =>
+                    (<Landing
+                      history={history}
+                      inviteGameId={match.params.inviteGameId}
+                    />)}
+                />
                 <Route
                   exact
                   path="/logout"
-                  render={({ history }) => {
-                    return <Logout history={history} />;
-                  }}
-                  />
+                  render={({ history }) =>
+                    <Logout history={history} />
+                  }
+                />
               </Switch>
             </div>
           </ConnectionLayer>

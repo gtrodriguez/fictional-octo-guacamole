@@ -17,12 +17,13 @@ class Logout extends React.Component {
 
 Logout.propTypes = {
   history: PropTypes.object.isRequired,
+  handleLogout: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   handleLogout() {
     dispatch(logout());
-  }
+  },
 });
 
-export default connect(null,mapDispatchToProps)(Logout);
+export default connect(null, mapDispatchToProps)(Logout);

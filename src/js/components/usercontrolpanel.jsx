@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Grid, Row, Col, Button, Form, FormGroup, FormControl, ControlLabel, Label } from 'react-bootstrap';
+import { Grid, Row, Button, Form, FormGroup, FormControl, ControlLabel } from 'react-bootstrap';
 
 class UserControlPanel extends React.Component {
   constructor(props) {
@@ -19,24 +19,24 @@ class UserControlPanel extends React.Component {
     if (usernameEl.value) {
       userObj.username = usernameEl.value;
     } else {
-      return window.alert('You must select a username!');
+      window.alert('You must select a username!');
+      return;
     }
 
-    if (emailEl.value){
+    if (emailEl.value) {
       userObj.email = emailEl.value;
     } else {
-      return window.alert('You must select an email!');
+      window.alert('You must select an email!');
+      return;
     }
 
     this.props.submitUserRegistration(userObj);
-
-    return;
   }
 
   connectUser() {
     const usernameEl = document.getElementById('active-username');
 
-    if (usernameEl.value){
+    if (usernameEl.value) {
       return this.props.submitConnectUser(usernameEl.value);
     }
 
@@ -64,33 +64,35 @@ class UserControlPanel extends React.Component {
             <div className="login-form-element">
               <FormGroup controlId="username">
                 <ControlLabel>Username:</ControlLabel>
-                <FormControl type="text" required/>
+                <FormControl type="text" required />
               </FormGroup>
               <FormGroup controlId="email">
                 <ControlLabel>Email:</ControlLabel>
-                <FormControl type="email" required/>
+                <FormControl type="email" required />
               </FormGroup>
             </div>
             <Button
               bsStyle="success"
-              type="submit">
+              type="submit"
+            >
               Register
             </Button>
           </Form>
         </Row>
-        <hr/>
+        <hr />
         <Row>
           <Form onSubmit={(e) => { e.preventDefault(); this.connectUser(); }}>
             <div className="login-form-element">
-            <FormGroup controlId="active-username">
-              <ControlLabel>Username:</ControlLabel>
-              <FormControl type="text" required/>
-            </FormGroup>
-            <Button
-              bsStyle="primary"
-              type="submit">
-              Sign In
-            </Button>
+              <FormGroup controlId="active-username">
+                <ControlLabel>Username:</ControlLabel>
+                <FormControl type="text" required />
+              </FormGroup>
+              <Button
+                bsStyle="primary"
+                type="submit"
+              >
+                Sign In
+              </Button>
             </div>
           </Form>
         </Row>
@@ -99,19 +101,19 @@ class UserControlPanel extends React.Component {
 
   render() {
     return (
-        <div>{this.renderContent()}</div>
-      );
+      <div>{this.renderContent()}</div>
+    );
   }
-};
+}
 
 UserControlPanel.defaultProps = {
-  user: null
+  user: null,
 };
 
-UserControlPanel.PropTypes = {
+UserControlPanel.propTypes = {
   user: PropTypes.object,
   submitUserRegistration: PropTypes.func.isRequired,
-  submitConnectUser: PropTypes.func.isRequired
+  submitConnectUser: PropTypes.func.isRequired,
 };
 
 

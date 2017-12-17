@@ -14,7 +14,7 @@ class GameBoardTile extends React.Component {
     if (this.props.value !== '') {
       className += ((this.props.value === 'X') ? ' player-1' : ' player-2');
     }
-    
+
     return className;
   }
 

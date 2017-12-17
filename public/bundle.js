@@ -22565,10 +22565,6 @@ var _reactRouterDom = __webpack_require__(48);
 
 var _reactRedux = __webpack_require__(560);
 
-var _socket = __webpack_require__(186);
-
-var _socket2 = _interopRequireDefault(_socket);
-
 var _store = __webpack_require__(547);
 
 var _store2 = _interopRequireDefault(_store);
@@ -22608,18 +22604,13 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var App = function (_React$Component) {
   _inherits(App, _React$Component);
 
-  function App(props) {
+  function App() {
     _classCallCheck(this, App);
 
-    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).call(this, props));
+    return _possibleConstructorReturn(this, (App.__proto__ || Object.getPrototypeOf(App)).apply(this, arguments));
   }
 
   _createClass(App, [{
-    key: 'alertWin',
-    value: function alertWin() {
-      window.alert('You won the game!');
-    }
-  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
@@ -22643,25 +22634,26 @@ var App = function (_React$Component) {
                   render: function render(_ref) {
                     var history = _ref.history,
                         match = _ref.match;
-
                     return _react2.default.createElement(_gameroom2.default, {
                       gameId: match.params.gameId,
                       history: history
                     });
-                  } }),
+                  }
+                }),
                 _react2.default.createElement(_reactRouterDom.Route, {
                   path: '/gamelist/:inviteGameId?',
                   render: function render(_ref2) {
                     var history = _ref2.history,
                         match = _ref2.match;
-
                     return _react2.default.createElement(_gamelist2.default, {
                       history: history,
                       match: match,
-                      inviteGameId: match.params.inviteGameId });
+                      inviteGameId: match.params.inviteGameId
+                    });
                   }
                 }),
-                _react2.default.createElement(_reactRouterDom.Route, { exact: true,
+                _react2.default.createElement(_reactRouterDom.Route, {
+                  exact: true,
                   path: '/:inviteGameId?',
                   render: function render(_ref3) {
                     var history = _ref3.history,
@@ -22670,13 +22662,13 @@ var App = function (_React$Component) {
                       history: history,
                       inviteGameId: match.params.inviteGameId
                     });
-                  } }),
+                  }
+                }),
                 _react2.default.createElement(_reactRouterDom.Route, {
                   exact: true,
                   path: '/logout',
                   render: function render(_ref4) {
                     var history = _ref4.history;
-
                     return _react2.default.createElement(_logout2.default, { history: history });
                   }
                 })
@@ -52274,18 +52266,18 @@ var UserControlPanel = function (_React$Component) {
       if (usernameEl.value) {
         userObj.username = usernameEl.value;
       } else {
-        return window.alert('You must select a username!');
+        window.alert('You must select a username!');
+        return;
       }
 
       if (emailEl.value) {
         userObj.email = emailEl.value;
       } else {
-        return window.alert('You must select an email!');
+        window.alert('You must select an email!');
+        return;
       }
 
       this.props.submitUserRegistration(userObj);
-
-      return;
     }
   }, {
     key: 'connectUser',
@@ -52369,7 +52361,8 @@ var UserControlPanel = function (_React$Component) {
               _reactBootstrap.Button,
               {
                 bsStyle: 'success',
-                type: 'submit' },
+                type: 'submit'
+              },
               'Register'
             )
           )
@@ -52400,7 +52393,8 @@ var UserControlPanel = function (_React$Component) {
                 _reactBootstrap.Button,
                 {
                   bsStyle: 'primary',
-                  type: 'submit' },
+                  type: 'submit'
+                },
                 'Sign In'
               )
             )
@@ -52422,13 +52416,11 @@ var UserControlPanel = function (_React$Component) {
   return UserControlPanel;
 }(_react2.default.Component);
 
-;
-
 UserControlPanel.defaultProps = {
   user: null
 };
 
-UserControlPanel.PropTypes = {
+UserControlPanel.propTypes = {
   user: _propTypes2.default.object,
   submitUserRegistration: _propTypes2.default.func.isRequired,
   submitConnectUser: _propTypes2.default.func.isRequired
@@ -52582,11 +52574,7 @@ var mapStateToProps = function mapStateToProps(state) {
   };
 };
 
-var mapDispatchToProps = function mapDispatchToProps(state) {
-  return {};
-};
-
-exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(GameRoom);
+exports.default = (0, _reactRedux.connect)(mapStateToProps)(GameRoom);
 
 /***/ }),
 /* 534 */
@@ -52605,10 +52593,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
 var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
-
-var _socket = __webpack_require__(186);
-
-var _socket2 = _interopRequireDefault(_socket);
 
 var _propTypes = __webpack_require__(1);
 
@@ -52653,7 +52637,7 @@ var GameBoard = function (_React$Component) {
     _this.maxY = 8;
     // for this iteration of the game, define the goal length
     _this.targetLength = 4;
-    //used for calculating a winner, if any
+    // used for calculating a winner, if any
     _this.runningScore = {
       currentSelection: null,
       currentComboLength: 0,
@@ -52666,7 +52650,6 @@ var GameBoard = function (_React$Component) {
     _this.handleClick = _this.handleClick.bind(_this);
     _this.checkGameBoard = _this.checkGameBoard.bind(_this);
     _this.isSlotOpen = _this.isSlotOpen.bind(_this);
-    _this.currentPlayerSymbol = _this.currentPlayerSymbol.bind(_this);
     _this.gameStateClass = _this.gameStateClass.bind(_this);
     _this.resolvePlayerSymbol = _this.resolvePlayerSymbol.bind(_this);
     _this.tileEnabled = _this.tileEnabled.bind(_this);
@@ -52677,21 +52660,6 @@ var GameBoard = function (_React$Component) {
   }
 
   _createClass(GameBoard, [{
-    key: 'componentWillMount',
-    value: function componentWillMount() {}
-  }, {
-    key: 'componentDidMount',
-    value: function componentDidMount() {}
-  }, {
-    key: 'componentWillUnmount',
-    value: function componentWillUnmount() {}
-  }, {
-    key: 'currentPlayerSymbol',
-    value: function currentPlayerSymbol(reverse) {
-      // this will not work where the current player setting is not the user id
-      return reverse ? this.props.gameInstance.currentPlayer === this.props.gameInstance.player1 ? 'O' : 'X' : this.props.gameInstance.currentPlayer === this.props.gameInstance.player1 ? 'X' : 'O';
-    }
-  }, {
     key: 'resolvePlayerSymbol',
     value: function resolvePlayerSymbol(playerName) {
       if (playerName === this.props.gameInstance.player1) {
@@ -52699,13 +52667,14 @@ var GameBoard = function (_React$Component) {
       } else if (playerName === this.props.gameInstance.player2) {
         return 'O';
       }
-
       return '';
     }
   }, {
     key: 'updateScore',
     value: function updateScore(cellVal) {
-      if (this.runningScore.currentSelection === null) this.runningScore.currentSelection = cellVal;
+      if (this.runningScore.currentSelection === null) {
+        this.runningScore.currentSelection = cellVal;
+      }
 
       if (cellVal) {
         if (cellVal === this.runningScore.currentSelection) {
@@ -52738,8 +52707,6 @@ var GameBoard = function (_React$Component) {
   }, {
     key: 'checkGameBoard',
     value: function checkGameBoard(gameInstance) {
-      var consecutive = 0,
-          gameWon = false;
       var x = 0;
       var y = 0;
       var tempX = 0;
@@ -52842,7 +52809,7 @@ var GameBoard = function (_React$Component) {
       return false;
     }
 
-    ///put in the first available slot starting from the top
+    // put in the first available slot starting from the top
 
   }, {
     key: 'handleClick',
@@ -52858,12 +52825,10 @@ var GameBoard = function (_React$Component) {
 
       if (this.checkGameBoard(newGameInstance)) {
         newGameInstance.gameOver = true;
+      } else if (newGameInstance.currentPlayer === newGameInstance.player1) {
+        newGameInstance.currentPlayer = newGameInstance.player2;
       } else {
-        if (newGameInstance.currentPlayer === newGameInstance.player1) {
-          newGameInstance.currentPlayer = newGameInstance.player2;
-        } else {
-          newGameInstance.currentPlayer = newGameInstance.player1;
-        }
+        newGameInstance.currentPlayer = newGameInstance.player1;
       }
 
       this.props.handleGameInstanceUpdate(newGameInstance);
@@ -52891,7 +52856,7 @@ var GameBoard = function (_React$Component) {
   }, {
     key: 'tileEnabled',
     value: function tileEnabled(index) {
-      return !(this.props.gameInstance.gameOver || !this.props.gameInstance.isActive || this.props.gameInstance.currentPlayer != this.props.user.username || !this.isSlotOpen(index));
+      return !(this.props.gameInstance.gameOver || !this.props.gameInstance.isActive || this.props.gameInstance.currentPlayer !== this.props.user.username || !this.isSlotOpen(index));
     }
   }, {
     key: 'handleGameInvite',
@@ -52924,6 +52889,7 @@ var GameBoard = function (_React$Component) {
           ' Tell your pal to check their email!'
         );
       }
+      return null;
     }
   }, {
     key: 'render',
@@ -52954,15 +52920,15 @@ var GameBoard = function (_React$Component) {
               { className: 'interactive-row' },
               this.props.gameInstance.scoreBoard.map(function (cell, index) {
                 return _react2.default.createElement(_interactivetile2.default, {
-                  key: index,
                   index: index,
-                  enabled: function enabled() {
-                    return _this2.tileEnabled(index);
-                  },
+                  enabled: _this2.tileEnabled(index),
                   handleClick: function handleClick(e) {
-                    e.preventDefault();if (!_this2.tileEnabled(index)) return;
+                    e.preventDefault();if (!_this2.tileEnabled(index)) {
+                      return;
+                    }
                     _this2.handleClick(index);
-                  } });
+                  }
+                });
               })
             )
           ),
@@ -52975,10 +52941,15 @@ var GameBoard = function (_React$Component) {
               this.props.gameInstance.scoreBoard.map(function (column, x) {
                 return _react2.default.createElement(
                   'div',
-                  { className: 'game-row', key: x },
+                  { className: 'game-row' },
                   column.map(function (cell, y) {
-                    return _react2.default.createElement(_gameboardtile2.default, { key: y, 'data-x': x, 'data-y': y, value: _this2.resolvePlayerSymbol(cell) });
-                  })
+                    return _react2.default.createElement(_gameboardtile2.default, {
+                      'data-x': x,
+                      'data-y': y,
+                      value: _this2.resolvePlayerSymbol(cell)
+                    });
+                  }),
+                  ')'
                 );
               })
             )
@@ -52991,10 +52962,11 @@ var GameBoard = function (_React$Component) {
   return GameBoard;
 }(_react2.default.Component);
 
-GameBoard.PropTypes = {
+GameBoard.propTypes = {
   gameInstance: _propTypes2.default.object.isRequired,
   connection: _propTypes2.default.object.isRequired,
-  user: _propTypes2.default.object.isRequired
+  user: _propTypes2.default.object.isRequired,
+  handleGameInstanceUpdate: _propTypes2.default.func.isRequired
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
@@ -53205,6 +53177,16 @@ var GameControlPanel = function (_React$Component) {
   }
 
   _createClass(GameControlPanel, [{
+    key: 'syncEmail',
+    value: function syncEmail() {
+      this.setState({ inviteeEmail: document.getElementById('player-2-email').value });
+    }
+  }, {
+    key: 'disableInviteBtn',
+    value: function disableInviteBtn() {
+      return this.state.inviteeEmail === '' && this.state.inviteeEmail === null;
+    }
+  }, {
     key: 'renderPlayer1Row',
     value: function renderPlayer1Row() {
       return _react2.default.createElement(
@@ -53233,16 +53215,8 @@ var GameControlPanel = function (_React$Component) {
           this.props.gameInstance && this.props.gameInstance.player2
         );
       }
-    }
-  }, {
-    key: 'syncEmail',
-    value: function syncEmail() {
-      this.setState({ inviteeEmail: document.getElementById('player-2-email').value });
-    }
-  }, {
-    key: 'disableInviteBtn',
-    value: function disableInviteBtn() {
-      return this.state.inviteeEmail === '' && this.state.inviteeEmail === null;
+
+      return null;
     }
   }, {
     key: 'renderActionItems',
@@ -53272,91 +53246,100 @@ var GameControlPanel = function (_React$Component) {
                 'Congratulations, you\'ve won!!! Woot!'
               )
             );
-          } else {
-            return _react2.default.createElement(
-              'div',
-              null,
-              _react2.default.createElement(
-                'strong',
-                null,
-                'Sorry, yo! Better luck next time.'
-              )
-            );
           }
-        } else {
           return _react2.default.createElement(
             'div',
             null,
             _react2.default.createElement(
-              'div',
-              { className: 'start-warning' },
+              'strong',
+              null,
+              'Sorry, yo! Better luck next time.'
+            )
+          );
+        }
+        return _react2.default.createElement(
+          'div',
+          null,
+          _react2.default.createElement(
+            'div',
+            { className: 'start-warning' },
+            _react2.default.createElement(
+              _reactBootstrap.Alert,
+              { bsStyle: 'warning' },
               _react2.default.createElement(
-                _reactBootstrap.Alert,
-                { bsStyle: 'warning' },
+                'strong',
+                null,
+                'This game has not been started yet!'
+              ),
+              _react2.default.createElement(
+                'div',
+                null,
                 _react2.default.createElement(
                   'strong',
                   null,
-                  'This game has not been started yet!'
+                  'Please send this code to another player!'
                 ),
                 _react2.default.createElement(
                   'div',
                   null,
                   _react2.default.createElement(
-                    'strong',
+                    'small',
                     null,
-                    'Please send this code to another player!'
-                  ),
-                  _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(
-                      'small',
-                      null,
-                      'Pst, you could also send a an invite to me at gabriel.torres.rodriguez@gmail.com. :)'
-                    )
+                    'Pst, you could also send a an invite to me at gabriel.torres.rodriguez@gmail.com. :)'
                   )
                 )
               )
-            ),
+            )
+          ),
+          _react2.default.createElement(
+            'div',
+            null,
             _react2.default.createElement(
-              'div',
-              null,
+              _reactBootstrap.Form,
+              {
+                inline: true,
+                onSubmit: function onSubmit(e) {
+                  e.preventDefault();
+                  _this2.props.handleGameInvite(_this2.state.inviteeEmail);
+                }
+              },
+              _react2.default.createElement('input', {
+                name: 'active-game-id',
+                id: 'active-game-id',
+                readOnly: true,
+                type: 'hidden',
+                value: this.props.gameInstance._id
+              }),
               _react2.default.createElement(
-                _reactBootstrap.Form,
-                { inline: true, onSubmit: function onSubmit(e) {
-                    e.preventDefault();
-                    _this2.props.handleGameInvite(_this2.state.inviteeEmail);
-                  } },
-                _react2.default.createElement('input', { name: 'active-game-id', id: 'active-game-id', readOnly: true, type: 'hidden', value: this.props.gameInstance._id }),
+                _reactBootstrap.FormGroup,
+                { controlId: 'player-2-email' },
                 _react2.default.createElement(
-                  _reactBootstrap.FormGroup,
-                  { controlId: 'player-2-email' },
-                  _react2.default.createElement(
-                    _reactBootstrap.ControlLabel,
-                    null,
-                    'Player 2 Email:'
-                  ),
-                  ' ',
-                  _react2.default.createElement(_reactBootstrap.FormControl, {
-                    placeholder: 'player2@exampleEmail.com',
-                    type: 'text',
-                    onChange: function onChange(e) {
-                      e.preventDefault();_this2.syncEmail();
-                    },
-                    required: true
-                  })
+                  _reactBootstrap.ControlLabel,
+                  null,
+                  'Player 2 Email:'
                 ),
                 ' ',
-                _react2.default.createElement(
-                  _reactBootstrap.Button,
-                  { bsStyle: 'primary', type: 'submit', disabled: this.disableInviteBtn() },
-                  'Invite'
-                )
+                _react2.default.createElement(_reactBootstrap.FormControl, {
+                  placeholder: 'player2@exampleEmail.com',
+                  type: 'text',
+                  onChange: function onChange(e) {
+                    e.preventDefault();_this2.syncEmail();
+                  },
+                  required: true
+                })
+              ),
+              ' ',
+              _react2.default.createElement(
+                _reactBootstrap.Button,
+                { bsStyle: 'primary', type: 'submit', disabled: this.disableInviteBtn() },
+                'Invite'
               )
             )
-          );
-        }
+          )
+        );
       }
+
+      return null;
     }
   }, {
     key: 'render',
@@ -53374,8 +53357,8 @@ var GameControlPanel = function (_React$Component) {
   return GameControlPanel;
 }(_react2.default.Component);
 
-GameControlPanel.PropTypes = {
-  gameInstance: _propTypes2.default.object,
+GameControlPanel.propTypes = {
+  gameInstance: _propTypes2.default.object.isRequired,
   user: _propTypes2.default.object.isRequired,
   handleGameInvite: _propTypes2.default.func.isRequired
 };
@@ -53410,6 +53393,8 @@ var _reactRedux = __webpack_require__(560);
 var _gameselector = __webpack_require__(539);
 
 var _gameselector2 = _interopRequireDefault(_gameselector);
+
+var _actionCreators = __webpack_require__(586);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -53461,22 +53446,20 @@ var GameList = function (_React$Component) {
       });
 
       this.props.connection.on('new-game-success', function (game) {
-        _this2.props.handleGameRetrieval(game);
+        _this2.handleGameRetrieval(game);
         _this2.props.history.push('/gameroom/' + game._id);
       });
     }
   }, {
-    key: 'handleRegisterGame',
-    value: function handleRegisterGame(gameId) {
-      this.props.connection.emit('register-game', {
-        gameId: gameId,
-        username: this.props.user.username
-      });
-    }
-  }, {
-    key: 'createNewGame',
-    value: function createNewGame() {
-      this.props.connection.emit('new-game', this.props.user.username);
+    key: 'handleGameRetrieval',
+    value: function handleGameRetrieval(gameObj) {
+      if (!gameObj.isActive) {
+        var newGameList = this.props.allGames.slice();
+        newGameList.push(gameObj);
+        this.props.handleSyncAllGames(newGameList);
+      }
+
+      this.props.handleGameInstanceUpdate(gameObj);
     }
   }, {
     key: 'renderGameColumn',
@@ -53484,8 +53467,6 @@ var GameList = function (_React$Component) {
       return _react2.default.createElement(_gameselector2.default, {
         games: this.props.allGames,
         inviteGameId: this.props.match.params.inviteGameId,
-        handleRegisterGame: this.handleRegisterGame,
-        createNewGame: this.createNewGame,
         user: this.props.user
       });
     }
@@ -53565,6 +53546,8 @@ GameList.propTypes = {
   history: _propTypes2.default.object.isRequired,
   match: _propTypes2.default.object.isRequired,
   allGames: _propTypes2.default.arrayOf(_propTypes2.default.object),
+  handleGameInstanceUpdate: _propTypes2.default.func.isRequired,
+  handleSyncAllGames: _propTypes2.default.func.isRequired,
   inviteGameId: _propTypes2.default.string
 };
 
@@ -53576,7 +53559,18 @@ var mapStateToProps = function mapStateToProps(state) {
   };
 };
 
-exports.default = (0, _reactRedux.connect)(mapStateToProps)(GameList);
+var mapDispatchToProps = function mapDispatchToProps(dispatch) {
+  return {
+    handleSyncAllGames: function handleSyncAllGames(response) {
+      dispatch((0, _actionCreators.setAllGames)(response));
+    },
+    handleGameInstanceUpdate: function handleGameInstanceUpdate(gameInstance) {
+      dispatch((0, _actionCreators.setGameInstance)(gameInstance));
+    }
+  };
+};
+
+exports.default = (0, _reactRedux.connect)(mapStateToProps, mapDispatchToProps)(GameList);
 
 /***/ }),
 /* 539 */
@@ -53621,17 +53615,37 @@ var GameSelector = function (_React$Component) {
 
     var _this = _possibleConstructorReturn(this, (GameSelector.__proto__ || Object.getPrototypeOf(GameSelector)).call(this, props));
 
+    _this.state = { inviteGameId: '' };
+
     _this.selectorContent = _this.selectorContent.bind(_this);
     _this.syncGameInvite = _this.syncGameInvite.bind(_this);
-    _this.state = { inviteGameId: '' };
     _this.renderGameInvites = _this.renderGameInvites.bind(_this);
+    _this.handleRegisterGame = _this.handleRegisterGame.bind(_this);
+    _this.createNewGame = _this.createNewGame.bind(_this);
     return _this;
   }
 
   _createClass(GameSelector, [{
     key: 'componentDidMount',
     value: function componentDidMount() {
-      this.setState({ inviteGameId: this.props.inviteGameId });
+      this.onMount(function callback() {
+        this.setState({
+          inviteGameId: this.props.inviteGameId
+        });
+      });
+    }
+  }, {
+    key: 'handleRegisterGame',
+    value: function handleRegisterGame(gameId) {
+      this.props.connection.emit('register-game', {
+        gameId: gameId,
+        username: this.props.user.username
+      });
+    }
+  }, {
+    key: 'createNewGame',
+    value: function createNewGame() {
+      this.props.connection.emit('new-game', this.props.user.username);
     }
   }, {
     key: 'selectorContent',
@@ -53653,7 +53667,7 @@ var GameSelector = function (_React$Component) {
         null,
         this.props.games.filter(function (game) {
           return game.isActive === true;
-        }).map(function (game, index) {
+        }).map(function (game) {
           return _react2.default.createElement(_gamelink2.default, { key: game._id, game: game, user: _this2.props.user });
         })
       );
@@ -53689,16 +53703,19 @@ var GameSelector = function (_React$Component) {
             null,
             this.props.games.filter(function (game) {
               return game.isActive === false;
-            }).map(function (game, index) {
+            }).map(function (game) {
               return _react2.default.createElement(_gamelink2.default, {
                 key: game._id,
                 game: game,
                 user: _this3.props.user,
-                handleRegisterGame: _this3.props.handleRegisterGame });
+                handleRegisterGame: _this3.handleRegisterGame
+              });
             })
           )
         );
       }
+
+      return null;
     }
   }, {
     key: 'render',
@@ -53716,7 +53733,7 @@ var GameSelector = function (_React$Component) {
             {
               bsStyle: 'primary',
               onClick: function onClick(e) {
-                e.preventDefault();_this4.props.createNewGame();
+                e.preventDefault();_this4.createNewGame();
               },
               type: 'button'
             },
@@ -53728,10 +53745,13 @@ var GameSelector = function (_React$Component) {
           null,
           _react2.default.createElement(
             _reactBootstrap.Form,
-            { inline: true, onSubmit: function onSubmit(e) {
+            {
+              inline: true,
+              onSubmit: function onSubmit(e) {
                 e.preventDefault();
                 _this4.props.handleRegisterGame(_this4.state.inviteGameId);
-              } },
+              }
+            },
             _react2.default.createElement(
               _reactBootstrap.FormGroup,
               { controlId: 'invite-game-id' },
@@ -53740,13 +53760,15 @@ var GameSelector = function (_React$Component) {
                 placeholder: 'Game Invite Code',
                 value: this.state.inviteGameId,
                 onChange: this.syncGameInvite,
-                required: true })
+                required: true
+              })
             ),
             _react2.default.createElement(
               _reactBootstrap.Button,
               {
                 type: 'submit',
-                disabled: this.joinDisabled() },
+                disabled: this.joinDisabled()
+              },
               'Join Game'
             )
           )
@@ -53777,9 +53799,9 @@ GameSelector.defaultProps = {
 
 GameSelector.propTypes = {
   games: _propTypes2.default.arrayOf(_propTypes2.default.object),
+  connection: _propTypes2.default.object.isRequired,
   inviteGameId: _propTypes2.default.string,
   handleRegisterGame: _propTypes2.default.func.isRequired,
-  createNewGame: _propTypes2.default.func.isRequired,
   user: _propTypes2.default.object.isRequired
 };
 
@@ -53897,9 +53919,11 @@ var GameLink = function (_React$Component) {
                 bsSize: 'small',
                 type: 'button',
                 onClick: function onClick(e) {
-                  e.preventDefault();e.stopPropagation();_this2.props.handleRegisterGame(_this2.props.game._id);
+                  e.preventDefault();e.stopPropagation();
+                  _this2.props.handleRegisterGame(_this2.props.game._id);
                 },
-                id: 'accept-btn' },
+                id: 'accept-btn'
+              },
               'Accept Invite'
             )
           )
@@ -53935,21 +53959,21 @@ var GameLink = function (_React$Component) {
             )
           )
         );
-      } else {
-        return _react2.default.createElement(
-          _reactBootstrap.Row,
-          null,
-          _react2.default.createElement(
-            _reactBootstrap.Col,
-            { sm: 8 },
-            _react2.default.createElement(
-              'strong',
-              null,
-              'Invite Not Sent!'
-            )
-          )
-        );
       }
+
+      return _react2.default.createElement(
+        _reactBootstrap.Row,
+        null,
+        _react2.default.createElement(
+          _reactBootstrap.Col,
+          { sm: 8 },
+          _react2.default.createElement(
+            'strong',
+            null,
+            'Invite Not Sent!'
+          )
+        )
+      );
     }
   }, {
     key: 'renderLinkContent',
@@ -53977,7 +54001,7 @@ var GameLink = function (_React$Component) {
               _react2.default.createElement(
                 _reactBootstrap.Col,
                 { sm: 6 },
-                this.props.game.lastUpdated ? new Date(this.props.game.lastUpdated).toLocaleString('en-US') : ""
+                this.props.game.lastUpdated ? new Date(this.props.game.lastUpdated).toLocaleString('en-US') : ''
               )
             )
           )
@@ -53995,8 +54019,10 @@ var GameLink = function (_React$Component) {
     value: function render() {
       return _react2.default.createElement(
         _reactBootstrap.ListGroupItem,
-        { 'data-game-instance-id': this.props.game._id,
-          key: this.props.game._id },
+        {
+          'data-game-instance-id': this.props.game._id,
+          key: this.props.game._id
+        },
         this.renderLinkContent()
       );
     }
@@ -54205,7 +54231,8 @@ var Logout = function (_React$Component) {
 }(_react2.default.Component);
 
 Logout.propTypes = {
-  history: _propTypes2.default.object.isRequired
+  history: _propTypes2.default.object.isRequired,
+  handleLogout: _propTypes2.default.func.isRequired
 };
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
@@ -54485,17 +54512,6 @@ Object.defineProperty(exports, "__esModule", {
 
 var _actions = __webpack_require__(584);
 
-/*
-export const CONNECT_SOCKET = 'CONNECT_SOCKET';
-export const REGISTER_USER = 'REGISTER_USER';
-export const NEW_GAME = 'NEW_GAME';
-export const FORFEIT_GAME = 'FORFEIT_GAME';
-export const GAME_MOVE = 'GAME_MOVE';
-export const LOAD_USER_DETAILS = 'LOAD_USER_DETAILS';
-export const LOAD_ALL_GAMES = 'LOAD_ALL_GAMES';
-export const LOAD_GAME_INSTANCE = 'LOAD_GAME_INSTANCE';
-*/
-
 var setConnection = function setConnection(state, action) {
   return Object.assign({}, state, {
     connection: action.payload
@@ -54518,7 +54534,7 @@ var setAllGames = function setAllGames(state, action) {
     allGames: action.payload
   });
 };
-var logout = function logout(state, action) {
+var logout = function logout(state) {
   return Object.assign({}, state, {
     user: null,
     gameId: null,
@@ -56649,9 +56665,17 @@ var _react = __webpack_require__(0);
 
 var _react2 = _interopRequireDefault(_react);
 
+var _socket = __webpack_require__(186);
+
+var _socket2 = _interopRequireDefault(_socket);
+
 var _reactRedux = __webpack_require__(560);
 
 var _reactRouterDom = __webpack_require__(48);
+
+var _propTypes = __webpack_require__(1);
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _actionCreators = __webpack_require__(586);
 
@@ -56666,36 +56690,37 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 var ConnectionLayer = function (_React$Component) {
   _inherits(ConnectionLayer, _React$Component);
 
-  function ConnectionLayer(props) {
+  function ConnectionLayer() {
     _classCallCheck(this, ConnectionLayer);
 
-    return _possibleConstructorReturn(this, (ConnectionLayer.__proto__ || Object.getPrototypeOf(ConnectionLayer)).call(this, props));
+    return _possibleConstructorReturn(this, (ConnectionLayer.__proto__ || Object.getPrototypeOf(ConnectionLayer)).apply(this, arguments));
   }
 
   _createClass(ConnectionLayer, [{
     key: 'componentWillMount',
     value: function componentWillMount() {
-      var that = this;
-      var socket = io();
+      var _this2 = this;
+
+      var socket = (0, _socket2.default)();
 
       socket.on('sync-game', function (game) {
-        that.props.handleLoadGameInstance({
+        _this2.props.handleLoadGameInstance({
           gameInstance: game
         });
       });
 
       socket.on('sync-game-list', function (games) {
-        that.props.handleSyncAllGames({
+        _this2.props.handleSyncAllGames({
           allGames: games
         });
       });
 
       socket.on('login-success', function (response) {
-        that.props.handleLoadUserDetails(response);
+        _this2.props.handleLoadUserDetails(response);
       });
 
       socket.on('retrieve-game', function (game) {
-        that.props.handleLoadGameInstance(game);
+        _this2.props.handleLoadGameInstance(game);
       });
 
       socket.on('invite-to-game', function (request) {
@@ -56712,12 +56737,6 @@ var ConnectionLayer = function (_React$Component) {
       this.props.handleConnect(socket);
     }
   }, {
-    key: 'componentDidMount',
-    value: function componentDidMount() {}
-  }, {
-    key: 'componentWillUnmount',
-    value: function componentWillUnmount() {}
-  }, {
     key: 'render',
     value: function render() {
       return _react2.default.createElement(
@@ -56731,7 +56750,18 @@ var ConnectionLayer = function (_React$Component) {
   return ConnectionLayer;
 }(_react2.default.Component);
 
-;
+ConnectionLayer.defaultProps = {
+  user: null
+};
+
+ConnectionLayer.propTypes = {
+  user: _propTypes2.default.object,
+  handleConnect: _propTypes2.default.func.isRequired,
+  handleLoadUserDetails: _propTypes2.default.func.isRequired,
+  handleLoadGameInstance: _propTypes2.default.func.isRequired,
+  handleSyncAllGames: _propTypes2.default.func.isRequired,
+  children: _propTypes2.default.oneOfType([_propTypes2.default.arrayOf(_propTypes2.default.node), _propTypes2.default.node]).isRequired
+};
 
 var mapDispatchToProps = function mapDispatchToProps(dispatch) {
   return {
@@ -56773,17 +56803,6 @@ exports.setGameMove = setGameMove;
 exports.logout = logout;
 
 var _actions = __webpack_require__(584);
-
-/*
-export const CONNECT_SOCKET = 'CONNECT_SOCKET';
-export const REGISTER_USER = 'REGISTER_USER';
-export const NEW_GAME = 'NEW_GAME';
-export const FORFEIT_GAME = 'FORFEIT_GAME';
-export const GAME_MOVE = 'GAME_MOVE';
-export const LOAD_USER_DETAILS = 'LOAD_USER_DETAILS';
-export const LOAD_ALL_GAMES = 'LOAD_ALL_GAMES';
-export const LOAD_GAME_INSTANCE = 'LOAD_GAME_INSTANCE';
-*/
 
 function setAllGames(response) {
   return {

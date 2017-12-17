@@ -1,7 +1,6 @@
 import React from 'react';
-import io from 'socket.io-client';
 import PropTypes from 'prop-types';
-import { Grid, Row, Col, Alert } from 'react-bootstrap';
+import { Alert } from 'react-bootstrap';
 import { connect } from 'react-redux';
 import InteractiveTile from './interactivetile';
 import GameBoardTile from './gameboardtile';
@@ -17,20 +16,19 @@ class GameBoard extends React.Component {
     this.maxY = 8;
     // for this iteration of the game, define the goal length
     this.targetLength = 4;
-    //used for calculating a winner, if any
+    // used for calculating a winner, if any
     this.runningScore = {
-      currentSelection : null,
-      currentComboLength : 0,
+      currentSelection: null,
+      currentComboLength: 0,
       longestRun: 0,
     };
 
-    this.state = {emailSent: false};
+    this.state = { emailSent: false };
 
     this.updateScore = this.updateScore.bind(this);
     this.handleClick = this.handleClick.bind(this);
     this.checkGameBoard = this.checkGameBoard.bind(this);
     this.isSlotOpen = this.isSlotOpen.bind(this);
-    this.currentPlayerSymbol = this.currentPlayerSymbol.bind(this);
     this.gameStateClass = this.gameStateClass.bind(this);
     this.resolvePlayerSymbol = this.resolvePlayerSymbol.bind(this);
     this.tileEnabled = this.tileEnabled.bind(this);
@@ -39,33 +37,19 @@ class GameBoard extends React.Component {
     this.renderEmailSentAlert = this.renderEmailSentAlert.bind(this);
   }
 
-  componentWillMount() {
-  }
-
-  componentDidMount() {
-  }
-
-  componentWillUnmount() {
-  }
-
-  currentPlayerSymbol(reverse) { // this will not work where the current player setting is not the user id
-    return reverse ? ((this.props.gameInstance.currentPlayer === this.props.gameInstance.player1) ? 'O' : 'X') : 
-    (this.props.gameInstance.currentPlayer === this.props.gameInstance.player1)? 'X' : 'O';
-  }
-
   resolvePlayerSymbol(playerName) {
     if (playerName === this.props.gameInstance.player1) {
       return 'X';
     } else if (playerName === this.props.gameInstance.player2) {
       return 'O';
     }
-
     return '';
   }
 
   updateScore(cellVal) {
-    if (this.runningScore.currentSelection === null)
+    if (this.runningScore.currentSelection === null) {
       this.runningScore.currentSelection = cellVal;
+    }
 
     if (cellVal) {
       if (cellVal === this.runningScore.currentSelection) {
@@ -86,18 +70,16 @@ class GameBoard extends React.Component {
     return false;
   }
 
-  checkForWinner(gameInstance, direction){
-    if(this.runningScore.currentComboLength === this.targetLength){
-        console.log('Player ' + this.resolvePlayerSymbol(gameInstance.currentPlayer) + ' won ' + direction + '!');
-        return true;
+  checkForWinner(gameInstance, direction) {
+    if (this.runningScore.currentComboLength === this.targetLength) {
+      console.log(`Player ${this.resolvePlayerSymbol(gameInstance.currentPlayer)} won ${direction}!`);
+      return true;
     }
 
     return false;
   }
 
   checkGameBoard(gameInstance) {
-    let consecutive = 0,
-      gameWon = false;
     let x = 0;
     let y = 0;
     let tempX = 0;
@@ -106,7 +88,7 @@ class GameBoard extends React.Component {
 
     // reset the current game board checking object
     this.runningScore = {
-      currentSelection : null,
+      currentSelection: null,
       longestRun: 0,
       currentComboLength: 0,
     };
@@ -144,7 +126,7 @@ class GameBoard extends React.Component {
         cellVal = gameInstance.scoreBoard[tempY][tempX];
         this.updateScore(cellVal);
         if (this.checkForWinner(gameInstance, 'diagonal down 1')) {
-         return true;
+          return true;
         }
         tempY -= 1;
         tempX += 1;
@@ -158,7 +140,7 @@ class GameBoard extends React.Component {
       while (tempX < 8 && tempY >= 0) {
         cellVal = gameInstance.scoreBoard[tempY][tempX];
         this.updateScore(cellVal);
-        if (this.checkForWinner(gameInstance, 'diagonal down 2')) { 
+        if (this.checkForWinner(gameInstance, 'diagonal down 2')) {
           return true;
         }
         tempY -= 1;
@@ -200,11 +182,11 @@ class GameBoard extends React.Component {
     return false;
   }
 
-  ///put in the first available slot starting from the top
+  // put in the first available slot starting from the top
   handleClick(index) {
-    var newGameInstance = Object.assign({}, this.props.gameInstance);
+    const newGameInstance = Object.assign({}, this.props.gameInstance);
 
-    for (var x = 0; x < this.maxX; x += 1) {
+    for (let x = 0; x < this.maxX; x += 1) {
       if (newGameInstance.scoreBoard[x][index] === 0) {
         newGameInstance.scoreBoard[x][index] = this.props.gameInstance.currentPlayer;
         break;
@@ -213,21 +195,19 @@ class GameBoard extends React.Component {
 
     if (this.checkGameBoard(newGameInstance)) {
       newGameInstance.gameOver = true;
+    } else if (newGameInstance.currentPlayer === newGameInstance.player1) {
+      newGameInstance.currentPlayer = newGameInstance.player2;
     } else {
-      if (newGameInstance.currentPlayer === newGameInstance.player1) {
-        newGameInstance.currentPlayer = newGameInstance.player2;
-      } else {
-        newGameInstance.currentPlayer = newGameInstance.player1;
-      }
+      newGameInstance.currentPlayer = newGameInstance.player1;
     }
 
     this.props.handleGameInstanceUpdate(newGameInstance);
     this.submitGameUpdate(newGameInstance);
   }
 
-  gameStateClass () {
-    var className = 'game-board-container';
-    if(this.props.gameInstance.gameOver){
+  gameStateClass() {
+    let className = 'game-board-container';
+    if (this.props.gameInstance.gameOver) {
       className += 'game-over';
     }
     return className;
@@ -237,14 +217,14 @@ class GameBoard extends React.Component {
     this.props.connection.emit('player-submit-turn', newGameInstance);
   }
 
-  isSlotOpen(index){
-    return !this.props.gameInstance.scoreBoard[this.maxY-1][index];
+  isSlotOpen(index) {
+    return !this.props.gameInstance.scoreBoard[this.maxY - 1][index];
   }
 
   tileEnabled(index) {
     return !(this.props.gameInstance.gameOver ||
           !this.props.gameInstance.isActive ||
-          this.props.gameInstance.currentPlayer != this.props.user.username ||
+          this.props.gameInstance.currentPlayer !== this.props.user.username ||
           !this.isSlotOpen(index));
   }
 
@@ -256,11 +236,11 @@ class GameBoard extends React.Component {
       email: inviteeEmail,
     });
 
-    this.setState({emailSent: true});
+    this.setState({ emailSent: true });
 
-    setTimeout(()=>{
-      that.setState({emailSent: false});
-    },4000);
+    setTimeout(() => {
+      that.setState({ emailSent: false });
+    }, 4000);
   }
 
   renderEmailSentAlert() {
@@ -269,9 +249,10 @@ class GameBoard extends React.Component {
         <strong>Game Invite Sent!</strong> Tell your pal to check their email!
       </Alert>);
     }
+    return null;
   }
 
-  render () {
+  render() {
     return (<div id="game-container">
       <div id="game-board-container" className={this.gameStateClass()}>
         <div className="control-panel">
@@ -287,44 +268,52 @@ class GameBoard extends React.Component {
         <div>
           <div className="interactive-row">
             {
-              this.props.gameInstance.scoreBoard.map((cell, index) => {
-                return <InteractiveTile
-                  key={index}
+              this.props.gameInstance.scoreBoard.map((cell, index) =>
+                (<InteractiveTile
                   index={index}
-                  enabled={() => { return this.tileEnabled(index); }} 
-                  handleClick={(e) => { e.preventDefault(); if (!this.tileEnabled(index)) return;
-                    this.handleClick(index); }}/>
-              })
+                  enabled={(this.tileEnabled(index))}
+                  handleClick={
+                    (e) => {
+                      e.preventDefault(); if (!this.tileEnabled(index)) { return; }
+                      this.handleClick(index);
+                    }
+                  }
+                />))
             }
           </div>
         </div>
         <div>
           <div className="game-board-grid">
             {
-              this.props.gameInstance.scoreBoard.map((column, x) => {
-                return (<div className="game-row" key={x}>{column.map((cell, y) => {
-                  return <GameBoardTile key={y} data-x={x} data-y={y} value={this.resolvePlayerSymbol(cell)} />})}</div>
-                );
-              })
+              this.props.gameInstance.scoreBoard.map((column, x) =>
+                (<div className="game-row">{column.map((cell, y) =>
+                  (<GameBoardTile
+                    data-x={x}
+                    data-y={y}
+                    value={this.resolvePlayerSymbol(cell)}
+                  />))
+                })
+                </div>))
             }
           </div>
         </div>
       </div>
-    </div> );
+    </div>);
   }
 }
 
-GameBoard.PropTypes = {
+GameBoard.propTypes = {
   gameInstance: PropTypes.object.isRequired,
   connection: PropTypes.object.isRequired,
   user: PropTypes.object.isRequired,
+  handleGameInstanceUpdate: PropTypes.func.isRequired,
 };
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = dispatch => ({
   handleGameInstanceUpdate(gameInstance) {
     dispatch(setGameInstance(gameInstance));
-  }
+  },
 });
 
 export const UnwrappedGameBoard = GameBoard;
-export default connect(null,mapDispatchToProps)(GameBoard);
+export default connect(null, mapDispatchToProps)(GameBoard);

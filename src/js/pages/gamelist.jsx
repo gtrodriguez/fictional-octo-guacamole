@@ -3,6 +3,7 @@ import { Grid, Row, Col } from 'react-bootstrap';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import GameSelector from '../components/gameselector';
+import { setGameInstance, setAllGames } from '../actionCreators';
 
 class GameList extends React.Component {
   constructor(props) {
@@ -26,7 +27,7 @@ class GameList extends React.Component {
     }
   }
 
-  registerSocketEvents(){
+  registerSocketEvents() {
     this.props.connection.on('register-success', (game) => {
       this.props.history.push(`/gameroom/${game._id}`);
     });
@@ -36,28 +37,25 @@ class GameList extends React.Component {
     });
 
     this.props.connection.on('new-game-success', (game) => {
-      this.props.handleGameRetrieval(game);
+      this.handleGameRetrieval(game);
       this.props.history.push(`/gameroom/${game._id}`);
     });
   }
 
-  handleRegisterGame(gameId) {
-    this.props.connection.emit('register-game', {
-      gameId,
-      username: this.props.user.username,
-    });
-  }
+  handleGameRetrieval(gameObj) {
+    if (!gameObj.isActive) {
+      const newGameList = this.props.allGames.slice();
+      newGameList.push(gameObj);
+      this.props.handleSyncAllGames(newGameList);
+    }
 
-  createNewGame() {
-    this.props.connection.emit('new-game', this.props.user.username);
+    this.props.handleGameInstanceUpdate(gameObj);
   }
 
   renderGameColumn() {
     return (<GameSelector
       games={this.props.allGames}
       inviteGameId={this.props.match.params.inviteGameId}
-      handleRegisterGame={this.handleRegisterGame}
-      createNewGame={this.createNewGame}
       user={this.props.user}
     />);
   }
@@ -109,13 +107,24 @@ GameList.propTypes = {
   history: PropTypes.object.isRequired,
   match: PropTypes.object.isRequired,
   allGames: PropTypes.arrayOf(PropTypes.object),
+  handleGameInstanceUpdate: PropTypes.func.isRequired,
+  handleSyncAllGames: PropTypes.func.isRequired,
   inviteGameId: PropTypes.string,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   user: state.user,
   connection: state.connection,
   allGames: state.allGames,
 });
 
-export default connect(mapStateToProps)(GameList);
+const mapDispatchToProps = dispatch => ({
+  handleSyncAllGames(response) {
+    dispatch(setAllGames(response));
+  },
+  handleGameInstanceUpdate(gameInstance) {
+    dispatch(setGameInstance(gameInstance));
+  },
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameList);

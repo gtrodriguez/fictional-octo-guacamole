@@ -67,13 +67,10 @@ GameRoom.propTypes = {
   gameInstance: PropTypes.object,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   user: state.user,
   connection: state.connection,
   gameInstance: state.gameInstance,
 });
 
-const mapDispatchToProps = (state) => ({
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(GameRoom);
+export default connect(mapStateToProps)(GameRoom);

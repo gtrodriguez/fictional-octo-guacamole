@@ -27,7 +27,7 @@ class Landing extends React.Component {
     }
   }
 
-  registerSocketEvents(){
+  registerSocketEvents() {
     this.props.connection.on('register-success', () => {
       this.props.history.push('/gamelist');
     });
@@ -124,7 +124,7 @@ Landing.propTypes = {
   inviteGameId: PropTypes.string,
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   user: state.user,
   connection: state.connection,
 });
