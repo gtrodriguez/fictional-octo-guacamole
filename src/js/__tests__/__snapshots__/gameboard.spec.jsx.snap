@@ -12,40 +12,49 @@ exports[`Gameboard renders correctly 1`] = `
       className="control-panel"
     >
       <GameControlPanel
-        allGames={Array []}
+        allGames={[]}
         connection={
           Socket {
-            "_callbacks": Object {
-              "$connect": Array [
+            "_opts": {
+              "hostname": "localhost",
+              "path": "/socket.io",
+              "port": "80",
+              "secure": false,
+              "transports": [
                 [Function],
-              ],
-              "$connecting": Array [
+                [Function],
                 [Function],
               ],
             },
-            "acks": Object {},
+            "_queue": [],
+            "_queueSeq": 0,
+            "acks": {},
             "connected": false,
-            "disconnected": true,
+            "flags": {},
             "ids": 0,
             "io": Manager {
-              "_callbacks": Object {
-                "$close": Array [
+              "_autoConnect": true,
+              "_callbacks": {
+                "$close": [
                   [Function],
                 ],
-                "$open": Array [
+                "$error": [
                   [Function],
                 ],
-                "$packet": Array [
+                "$open": [
+                  [Function],
+                ],
+                "$packet": [
                   [Function],
                 ],
               },
               "_randomizationFactor": 0.5,
+              "_readyState": "opening",
               "_reconnection": true,
               "_reconnectionAttempts": Infinity,
               "_reconnectionDelay": 1000,
               "_reconnectionDelayMax": 5000,
               "_timeout": 20000,
-              "autoConnect": true,
               "backoff": Backoff {
                 "attempts": 0,
                 "factor": 2,
@@ -53,114 +62,157 @@ exports[`Gameboard renders correctly 1`] = `
                 "max": 5000,
                 "ms": 1000,
               },
-              "connecting": Array [
-                [Circular],
-              ],
+              "clearTimeoutFn": [Function],
               "decoder": Decoder {
-                "reconstructor": null,
+                "opts": {
+                  "maxAttachments": 10,
+                  "reviver": undefined,
+                },
               },
-              "encoder": Encoder {},
-              "encoding": false,
+              "encoder": Encoder {
+                "replacer": undefined,
+              },
               "engine": Socket {
-                "_callbacks": Object {
-                  "$error": Array [
+                "_callbacks": {
+                  "$error": [
                     [Function],
                   ],
-                  "$open": Array [
+                  "$open": [
                     [Function],
                   ],
                 },
-                "agent": false,
-                "binaryType": null,
-                "ca": null,
-                "cert": null,
-                "ciphers": null,
-                "enablesXDR": false,
-                "forceBase64": false,
-                "forceJSONP": false,
-                "forceNode": false,
-                "hostname": "about",
-                "id": null,
-                "jsonp": true,
-                "key": null,
-                "onlyBinaryUpgrades": undefined,
-                "passphrase": null,
-                "path": "/socket.io/",
-                "perMessageDeflate": Object {
-                  "threshold": 1024,
+                "_maxPayload": -1,
+                "_pingInterval": -1,
+                "_pingTimeout": -1,
+                "_pingTimeoutTime": Infinity,
+                "_prevBufferLen": 0,
+                "_transportsByName": {
+                  "polling": [Function],
+                  "websocket": [Function],
+                  "webtransport": [Function],
                 },
-                "pfx": null,
-                "pingInterval": null,
-                "pingIntervalTimer": null,
-                "pingTimeout": null,
-                "pingTimeoutTimer": null,
-                "policyPort": 843,
+                "_upgrades": [],
+                "binaryType": "nodebuffer",
+                "clearTimeoutFn": [Function],
+                "hostname": "localhost",
+                "opts": {
+                  "addTrailingSlash": true,
+                  "agent": false,
+                  "closeOnBeforeunload": false,
+                  "hostname": "localhost",
+                  "path": "/socket.io/",
+                  "perMessageDeflate": {
+                    "threshold": 1024,
+                  },
+                  "port": "80",
+                  "rejectUnauthorized": true,
+                  "rememberUpgrade": false,
+                  "secure": false,
+                  "timestampParam": "t",
+                  "transportOptions": {},
+                  "transports": [
+                    [Function],
+                    [Function],
+                    [Function],
+                  ],
+                  "upgrade": true,
+                  "withCredentials": false,
+                },
                 "port": "80",
-                "prevBufferLen": 0,
-                "query": Object {},
                 "readyState": "opening",
-                "rejectUnauthorized": true,
-                "rememberUpgrade": false,
                 "secure": false,
-                "timestampParam": "t",
-                "timestampRequests": undefined,
+                "setTimeoutFn": [Function],
                 "transport": XHR {
-                  "_callbacks": Object {
-                    "$close": Array [
+                  "_callbacks": {
+                    "$close": [
                       [Function],
                     ],
-                    "$drain": Array [
+                    "$drain": [
                       [Function],
                     ],
-                    "$error": Array [
+                    "$error": [
                       [Function],
                     ],
-                    "$packet": Array [
+                    "$packet": [
                       [Function],
                     ],
                   },
-                  "agent": false,
-                  "ca": null,
-                  "cert": null,
-                  "ciphers": null,
-                  "enablesXDR": false,
-                  "extraHeaders": undefined,
-                  "forceNode": false,
-                  "hostname": "about",
-                  "key": null,
-                  "localAddress": undefined,
-                  "passphrase": null,
-                  "path": "/socket.io/",
-                  "pfx": null,
+                  "_polling": true,
+                  "clearTimeoutFn": [Function],
+                  "opts": {
+                    "addTrailingSlash": true,
+                    "agent": false,
+                    "closeOnBeforeunload": false,
+                    "hostname": "localhost",
+                    "path": "/socket.io/",
+                    "perMessageDeflate": {
+                      "threshold": 1024,
+                    },
+                    "port": "80",
+                    "query": {
+                      "EIO": 4,
+                      "t": "hzncmz0q",
+                      "transport": "polling",
+                    },
+                    "rejectUnauthorized": true,
+                    "rememberUpgrade": false,
+                    "secure": false,
+                    "socket": [Circular],
+                    "timestampParam": "t",
+                    "transportOptions": {},
+                    "transports": [
+                      [Function],
+                      [Function],
+                      [Function],
+                    ],
+                    "upgrade": true,
+                    "withCredentials": false,
+                  },
                   "pollXhr": Request {
-                    "_callbacks": Object {
-                      "$data": Array [
+                    "_callbacks": {
+                      "$data": [
                         [Function],
                       ],
-                      "$error": Array [
+                      "$error": [
                         [Function],
                       ],
                     },
-                    "agent": false,
-                    "async": true,
-                    "ca": null,
-                    "cert": null,
-                    "ciphers": null,
-                    "data": null,
-                    "enablesXDR": false,
-                    "extraHeaders": undefined,
-                    "index": 0,
-                    "isBinary": undefined,
-                    "key": null,
-                    "method": "GET",
-                    "passphrase": null,
-                    "pfx": null,
-                    "rejectUnauthorized": true,
-                    "requestTimeout": undefined,
-                    "supportsBinary": false,
-                    "uri": "http://about/socket.io/?EIO=3&transport=polling&t=M1cZZi0&b64=1",
-                    "xd": true,
-                    "xhr": XMLHttpRequest {
+                    "_data": null,
+                    "_index": 0,
+                    "_method": "GET",
+                    "_opts": {
+                      "addTrailingSlash": true,
+                      "agent": false,
+                      "closeOnBeforeunload": false,
+                      "cookieJar": undefined,
+                      "hostname": "localhost",
+                      "path": "/socket.io/",
+                      "perMessageDeflate": {
+                        "threshold": 1024,
+                      },
+                      "port": "80",
+                      "query": {
+                        "EIO": 4,
+                        "t": "hzncmz0q",
+                        "transport": "polling",
+                      },
+                      "rejectUnauthorized": true,
+                      "rememberUpgrade": false,
+                      "secure": false,
+                      "socket": [Circular],
+                      "timestampParam": "t",
+                      "transportOptions": {},
+                      "transports": [
+                        [Function],
+                        [Function],
+                        [Function],
+                      ],
+                      "upgrade": true,
+                      "withCredentials": false,
+                      "xd": false,
+                    },
+                    "_uri": "http://localhost/socket.io/?EIO=4&transport=polling&t=hzncmz0q",
+                    "_xhr": XMLHttpRequest {
                       "DONE": 4,
                       "HEADERS_RECEIVED": 2,
                       "LOADING": 3,
@@ -177,6 +229,10 @@ exports[`Gameboard renders correctly 1`] = `
                       "open": [Function],
                       "readyState": 1,
                       "removeEventListener": [Function],
+                      "response": {
+                        "data": [],
+                        "type": "Buffer",
+                      },
                       "responseText": "",
                       "responseXML": "",
                       "send": [Function],
@@ -185,89 +241,74 @@ exports[`Gameboard renders correctly 1`] = `
                       "status": null,
                       "statusText": null,
                     },
-                    "xs": false,
+                    "clearTimeoutFn": [Function],
+                    "createRequest": [Function],
+                    "setTimeoutFn": [Function],
                   },
-                  "polling": true,
-                  "port": "80",
-                  "query": Object {
-                    "EIO": 3,
-                    "b64": 1,
-                    "t": "M1cZZi0",
+                  "query": {
+                    "EIO": 4,
+                    "t": "hzncmz0q",
                     "transport": "polling",
                   },
                   "readyState": "opening",
-                  "rejectUnauthorized": true,
-                  "requestTimeout": undefined,
-                  "secure": false,
+                  "setTimeoutFn": [Function],
                   "socket": [Circular],
-                  "supportsBinary": false,
-                  "timestampParam": "t",
-                  "timestampRequests": undefined,
-                  "xd": true,
-                  "xs": false,
+                  "supportsBinary": true,
+                  "writable": false,
+                  "xd": false,
                 },
-                "transportOptions": Object {},
-                "transports": Array [
+                "transports": [
                   "polling",
                   "websocket",
+                  "webtransport",
                 ],
-                "upgrade": true,
-                "upgrades": null,
-                "writeBuffer": Array [],
+                "writeBuffer": [],
               },
-              "lastPing": null,
-              "nsps": Object {
-                "//about://": [Circular],
+              "nsps": {
+                "/": [Circular],
               },
-              "opts": Object {
-                "hostname": "about",
+              "opts": {
+                "hostname": "localhost",
                 "path": "/socket.io",
                 "port": "80",
                 "secure": false,
+                "transports": [
+                  [Function],
+                  [Function],
+                  [Function],
+                ],
               },
-              "packetBuffer": Array [],
-              "readyState": "opening",
+              "setTimeoutFn": [Function],
               "skipReconnect": false,
-              "subs": Array [
-                Object {
-                  "destroy": [Function],
-                },
-                Object {
-                  "destroy": [Function],
-                },
-                Object {
-                  "destroy": [Function],
-                },
+              "subs": [
+                [Function],
+                [Function],
+                [Function],
               ],
-              "uri": "about://about://",
+              "uri": "http://localhost",
             },
-            "json": [Circular],
-            "nsp": "//about://",
-            "receiveBuffer": Array [],
-            "sendBuffer": Array [],
-            "subs": Array [
-              Object {
-                "destroy": [Function],
-              },
-              Object {
-                "destroy": [Function],
-              },
-              Object {
-                "destroy": [Function],
-              },
+            "nsp": "/",
+            "receiveBuffer": [],
+            "recovered": false,
+            "sendBuffer": [],
+            "subs": [
+              [Function],
+              [Function],
+              [Function],
+              [Function],
             ],
           }
         }
         gameInstance={
-          Object {
+          {
             "_id": "123456",
             "currentPlayer": "Player1",
             "gameOver": false,
             "isActive": false,
             "player1": "Player1",
             "player2": "Player2",
-            "scoreBoard": Array [
-              Array [
+            "scoreBoard": [
+              [
                 0,
                 0,
                 0,
@@ -277,7 +318,7 @@ exports[`Gameboard renders correctly 1`] = `
                 0,
                 0,
               ],
-              Array [
+              [
                 0,
                 0,
                 0,
@@ -287,7 +328,7 @@ exports[`Gameboard renders correctly 1`] = `
                 0,
                 0,
               ],
-              Array [
+              [
                 0,
                 0,
                 0,
@@ -297,7 +338,7 @@ exports[`Gameboard renders correctly 1`] = `
                 0,
                 0,
               ],
-              Array [
+              [
                 0,
                 0,
                 0,
@@ -307,7 +348,7 @@ exports[`Gameboard renders correctly 1`] = `
                 0,
                 0,
               ],
-              Array [
+              [
                 0,
                 0,
                 0,
@@ -317,7 +358,7 @@ exports[`Gameboard renders correctly 1`] = `
                 0,
                 0,
               ],
-              Array [
+              [
                 0,
                 0,
                 0,
@@ -327,7 +368,7 @@ exports[`Gameboard renders correctly 1`] = `
                 0,
                 0,
               ],
-              Array [
+              [
                 0,
                 0,
                 0,
@@ -337,7 +378,7 @@ exports[`Gameboard renders correctly 1`] = `
                 0,
                 0,
               ],
-              Array [
+              [
                 0,
                 0,
                 0,
@@ -352,7 +393,7 @@ exports[`Gameboard renders correctly 1`] = `
         }
         handleSyncAllGames={[Function]}
         user={
-          Object {
+          {
             "email": "Player1Email",
             "username": "Player1",
           }

@@ -3,11 +3,9 @@ const app = express();
 const http = require('http').Server(app);
 const path = require('path');
 const io = require('socket.io')(http);
-const mongoDB = require('mongodb');
 const mongoose = require('mongoose');
+const { ObjectId } = mongoose.Types;
 const nodemailer = require('nodemailer');
-const mongoClient = mongoDB.MongoClient;
-const ObjectID = mongoDB.ObjectID;
 
 function startServer() {
   app.use('/public', express.static(path.join(__dirname, 'public')));
@@ -16,35 +14,26 @@ function startServer() {
     res.sendFile(path.join(__dirname + '/example.html'));
   });
 
-  let gameInstance = null;
-  let timeStamp = null;
-  let currentPlayer = null;
   let transporter = null;
 
-  if (process.env.EMAIL_ENABLED==="true") {
+  if (process.env.EMAIL_ENABLED === 'true') {
     transporter = nodemailer.createTransport({
-    service: process.env.GAMEMASTER_EMAIL_SERVICE,
-    auth: {
-          user: process.env.GAMEMASTER_EMAIL_ADDRESS,
-          pass: process.env.GAMEMASTER_EMAIL_PASSWORD
+      service: process.env.GAMEMASTER_EMAIL_SERVICE,
+      auth: {
+        user: process.env.GAMEMASTER_EMAIL_ADDRESS,
+        pass: process.env.GAMEMASTER_EMAIL_PASSWORD
       }
     });
   }
 
-  console.log(process.env.MONGODB_CONNECTION_STR);
-  mongoose.connect(process.env.MONGODB_CONNECTION_STR, { useMongoClient: true });
+  mongoose.connect(process.env.MONGODB_CONNECTION_STR);
 
-  const db = mongoose.connection,
-  dbCollection = db.collections,
-  userSchema = mongoose.Schema({
-    username: {
-        type: String
-      },
-      email: {
-        type: String
-      }
-  }, { runSettersOnQuery: true }),
-  gameSchema = mongoose.Schema({
+  const userSchema = mongoose.Schema({
+    username: { type: String },
+    email: { type: String }
+  });
+
+  const gameSchema = mongoose.Schema({
     id: Number,
     player1: String,
     player2: String,
@@ -55,165 +44,141 @@ function startServer() {
     lastUpdated: Date,
     gameOver: Boolean,
     inviteeEmail: String
-  }),
-  User = mongoose.model('User', userSchema),
-  Game = mongoose.model('Game', gameSchema);
+  });
 
-  io.on('connection', function(socket){
-    socket.on('register', function(msg){
-      User.findOne({ username: msg.username }, function (err, user) {
-          if (err) return console.log(err);
+  const User = mongoose.model('User', userSchema);
+  const Game = mongoose.model('Game', gameSchema);
 
-          if (user == null) {//only allow registering with this method
-            console.log("did not find user");
-            const userObj = {
-              username: msg.username,
-              email: msg.email,
-              _id: new ObjectID()
-            };
-            const newUser = new User(userObj);
+  io.on('connection', function (socket) {
+    socket.on('register', async function (msg) {
+      try {
+        const user = await User.findOne({ username: msg.username });
 
-            newUser.save(function (err) {
-                if(err) console.log(err);
-                console.log("attempt to save");
-            });
+        if (user == null) {
+          const userObj = {
+            username: msg.username,
+            email: msg.email,
+            _id: new ObjectId()
+          };
+          const newUser = new User(userObj);
+          await newUser.save();
 
-            Game.update({'inviteeEmail': msg.email},{'player2': userObj.username},function(err,raw){
-              Game.find({'player2': userObj.username}, null, {sort: '-lastUpdated'}, function (err, games) {
-              if (err) return console.log(err);
-                // set up personal socket.
-                socket.emit('login-success', {user: userObj, allGames: games});
-              });
-            });
-          } else {
-            console.log("found user", user);
-            //if already exist then return this user
-            Game.find({$and: [{$or: [{'player1': username}, {'player2': username}, {'inviteeEmail': user.email}]}, {'gameOver': false}]},
-              null, {sort: '-lastUpdated'},
-              function (err, games) {
-                socket.emit('login-success', {user: user, allGames: games});
-            });
-          }
-      });
+          await Game.updateMany({ inviteeEmail: msg.email }, { player2: userObj.username });
+          const games = await Game.find({ player2: userObj.username }, null, { sort: '-lastUpdated' });
+          socket.emit('login-success', { user: userObj, allGames: games });
+        } else {
+          const games = await Game.find(
+            { $and: [{ $or: [{ player1: user.username }, { player2: user.username }, { inviteeEmail: user.email }] }, { gameOver: false }] },
+            null,
+            { sort: '-lastUpdated' }
+          );
+          socket.emit('login-success', { user: user, allGames: games });
+        }
+      } catch (err) {
+        console.error(err);
+      }
     });
 
-    socket.on('login',function(username){
-      console.log('login: ', JSON.stringify(username));
+    socket.on('login', async function (username) {
+      try {
+        const user = await User.findOne({ username: username });
 
-      User.findOne({ username: username }, function (err, user) {
-          if (err) return console.log(err);
-
-          if (user) {
-            //if already exist then return this user
-            Game.find(
-              {$and: [{$or: [{'player1': username}, {'player2': username}, {'inviteeEmail': user.email}]}, {'gameOver': false}]}, null, {sort: '-lastUpdated'}, function (err, games) {
-              // set up personal socket.
-              socket.join(user._id);
-              socket.emit('login-success', {user: user, allGames: games});
-            });
-          } else {
-            console.log("Could not find user!");
-            socket.emit('login-failed', username);
-          }
-      });
+        if (user) {
+          const games = await Game.find(
+            { $and: [{ $or: [{ player1: username }, { player2: username }, { inviteeEmail: user.email }] }, { gameOver: false }] },
+            null,
+            { sort: '-lastUpdated' }
+          );
+          socket.join(user._id.toString());
+          socket.emit('login-success', { user: user, allGames: games });
+        } else {
+          socket.emit('login-failed', username);
+        }
+      } catch (err) {
+        console.error(err);
+      }
     });
 
-    socket.on('select-game', function (msg) {
-      Game.findOne({
-        _id: msg._id
-      }, function (err, gameInstance) {
-        if (err) console.log(err);
-        socket.join(msg._id);
+    socket.on('select-game', async function (msg) {
+      try {
+        const gameInstance = await Game.findOne({ _id: msg._id });
+        socket.join(msg._id.toString());
         socket.emit('retrieve-game', gameInstance);
-      });
+      } catch (err) {
+        console.error(err);
+      }
     });
 
-    // send an email to another player with a link to the game room
-    socket.on('invite-player', function(request){
-      // send an email with a link to the game instance
-      Game.findOne({_id: request.gameId}, function (err, game){
-        if (err)
-          return socket.emit('register-failed', {reason: "game not found"});
+    socket.on('invite-player', async function (request) {
+      try {
+        const game = await Game.findOne({ _id: request.gameId });
+        if (!game) return socket.emit('register-failed', { reason: 'game not found' });
 
-        User.findOne({email: request.email}, function (err, user) {
-          let mailOptions = {};
+        const user = await User.findOne({ email: request.email });
 
-          if (err)
-            return socket.emit('invite-failed', {reason: "some sort of error!"});
+        const inviteHtml = `<div>
+          <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
+          <div><a href="${process.env.APP_BASE_URL}/${request.gameId}">Click here to join!</a></div>
+        </div>`;
 
-          if (user) {
-            // attempt to send the message in app.
-            socket.to(user._id).emit('invite-to-game', request.gameId);
-            game.player2 = user.username;
-            //create a link with an option.
-            mailOptions = {
-              from: process.env.GAMEMASTER_EMAIL_ADDRESS, // sender address
-              to: request.email, // list of receivers
-              subject: 'You\'ve been invited to a Connect X game!', // Subject line
-              html: `<div>
-                <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
-                <div><a href="${process.env.APP_BASE_URL}/${request.gameId}">Click here to join!</a></div>
-              </div>`
-            };
-          } else {
-            mailOptions = {
-              from: process.env.GAMEMASTER_EMAIL_ADDRESS, // sender address
-              to: request.email, // list of receivers
-              subject: 'You\'ve been invited to a Connect X game!', // Subject line
-              html: `<div>
-                <h2>You're invited to a game on Connect X by ${request.senderUserName}!</h2>
-                <div><a href="${process.env.APP_BASE_URL}/${request.gameId}">Click here to join!</a></div>
-              </div>`
-            };
-          }
+        const mailOptions = {
+          from: process.env.GAMEMASTER_EMAIL_ADDRESS,
+          to: request.email,
+          subject: "You've been invited to a Connect X game!",
+          html: inviteHtml
+        };
 
-          if (process.env.EMAIL_ENABLED==="true") {
-            transporter.sendMail(mailOptions, function (err, info) {
-               if(err)
-                 console.log(err)
-               else
-                 console.log(info);
-            });
-          }
-        });
+        if (user) {
+          socket.to(user._id.toString()).emit('invite-to-game', request.gameId);
+          game.player2 = user.username;
+        }
+
+        if (process.env.EMAIL_ENABLED === 'true') {
+          transporter.sendMail(mailOptions, function (err, info) {
+            if (err) console.error(err);
+            else console.log(info);
+          });
+        }
 
         game.inviteeEmail = request.email;
         game.lastUpdated = new Date();
-        game.save();
+        await game.save();
 
-        io.to(game._id).emit('sync-game', game);
-      });
+        io.to(game._id.toString()).emit('sync-game', game);
+      } catch (err) {
+        console.error(err);
+        socket.emit('invite-failed', { reason: 'error sending invite' });
+      }
     });
 
-    socket.on('register-game', function(request){
-      // once they click the link they should be forwarded to a game room
-      User.findOne({username: request.username}, function (err, user) {
-        if (err) 
-          return socket.emit('register-failed', {reason: "user not found!"});;
+    socket.on('register-game', async function (request) {
+      try {
+        const user = await User.findOne({ username: request.username });
+        if (!user) return socket.emit('register-failed', { reason: 'user not found!' });
 
-        Game.findOne({_id: request.gameId}, function (err, game){
-          if (err)
-            return socket.emit('register-failed', {reason: "game not found"});
+        const game = await Game.findOne({ _id: request.gameId });
+        if (!game) return socket.emit('register-failed', { reason: 'game not found' });
 
-          game.player2 = user.username;
-          game.isActive = true;
-          game.currentPlayer = Math.round(Math.random()) == 0 ? game.player1 : game.player2;
-          game.lastUpdated = new Date();
-          game.save();
+        game.player2 = user.username;
+        game.isActive = true;
+        game.currentPlayer = Math.round(Math.random()) === 0 ? game.player1 : game.player2;
+        game.lastUpdated = new Date();
+        await game.save();
 
-          socket.join(game._id);
-          socket.emit('register-success', game);
-          io.to(game._id).emit('sync-game', game);
-        });
-      });
+        socket.join(game._id.toString());
+        socket.emit('register-success', game);
+        io.to(game._id.toString()).emit('sync-game', game);
+      } catch (err) {
+        console.error(err);
+        socket.emit('register-failed', { reason: 'error registering game' });
+      }
     });
 
-    socket.on('forfeit', function(request) {
+    socket.on('forfeit', function () {
       // the ability to cancel a game
     });
 
-    //create a new game instance
-    socket.on('new-game', function (username) {
+    socket.on('new-game', async function (username) {
       var gameMatrix = new Array(8);
       for (var i = 0; i < 8; i += 1) {
         gameMatrix[i] = new Array(8);
@@ -224,46 +189,48 @@ function startServer() {
         scoreBoard: gameMatrix,
         player1: username,
         isActive: false,
-        _id: new ObjectID(),
+        _id: new ObjectId(),
         gameOver: false
-      },
-      newGame = new Game(gameInstance);
+      };
 
-      newGame.save(function (err) {
-          if(err) console.log(err);
-      });
+      try {
+        const newGame = new Game(gameInstance);
+        await newGame.save();
 
-      socket.join(gameInstance._id);
-      socket.emit('new-game-success', gameInstance);
-    })
+        socket.join(gameInstance._id.toString());
+        socket.emit('new-game-success', gameInstance);
+      } catch (err) {
+        console.error(err);
+      }
+    });
 
-    socket.on('player-submit-turn', function (msg) {
-      Game.findOne({
-        _id: msg._id,
-      }, function (err, gameInstance){
-          if (err) console.log(err);
+    socket.on('player-submit-turn', async function (msg) {
+      try {
+        const gameInstance = await Game.findOne({ _id: msg._id });
+        if (!gameInstance) return;
 
-          gameInstance.scoreBoard = msg.scoreBoard;
-          gameInstance.currentPlayer = msg.currentPlayer;
-          gameInstance.lastUpdated = new Date();
-          gameInstance.gameOver = msg.gameOver;
-          gameInstance.save();
+        gameInstance.scoreBoard = msg.scoreBoard;
+        gameInstance.currentPlayer = msg.currentPlayer;
+        gameInstance.lastUpdated = new Date();
+        gameInstance.gameOver = msg.gameOver;
+        await gameInstance.save();
 
-          // broadcast the game update to all the players subscribed to a game room
-          io.to(msg._id).emit('sync-game', gameInstance); 
-      });
+        io.to(msg._id.toString()).emit('sync-game', gameInstance);
+      } catch (err) {
+        console.error(err);
+      }
     });
 
     socket.on('initial', function (msg) {
-        console.log('message: ' + JSON.stringify(msg));
+      console.log('message: ' + JSON.stringify(msg));
     });
-  })
+  });
 
   return new Promise(resolve => {
-      const server = http.listen(process.env.PORT || 3000, () => {
-        resolve(server);
-      })
+    const server = http.listen(process.env.PORT || 3000, () => {
+      resolve(server);
+    });
   });
 }
 
-module.exports = startServer
+module.exports = startServer;

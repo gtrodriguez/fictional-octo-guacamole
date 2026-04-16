@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [master, 'claude/**']
+  pull_request:
+    branches: [master]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongodb:
+        image: mongo:6
+        ports:
+          - 27017:27017
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Seed test data
+        run: |
+          npx mongosh mongodb://127.0.0.1:27017/mydb_test --eval '
+            db.users.insertMany([
+              { _id: "abc123", username: "Player1", email: "player1@email.com" },
+              { _id: "def456", username: "Player2", email: "player2@email.com" }
+            ])
+          '
+
+      - name: Run tests
+        env:
+          MONGODB_CONNECTION_STR: mongodb://127.0.0.1:27017/mydb_test
+          APP_BASE_URL: http://localhost:5000
+          EMAIL_ENABLED: 'false'
+        run: npm test
