@@ -26,7 +26,8 @@ function startServer() {
     });
   }
 
-  mongoose.connect(process.env.MONGODB_CONNECTION_STR);
+  mongoose.connect(process.env.MONGODB_CONNECTION_STR)
+    .catch(err => console.error('MongoDB connection error:', err.message));
 
   const userSchema = mongoose.Schema({
     username: { type: String },
